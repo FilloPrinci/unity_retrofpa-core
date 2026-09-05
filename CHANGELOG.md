@@ -57,6 +57,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   currently equipped item, raises `ItemChanged`/`EquippedItemChanged`.
 - `CollectibleItem`: bridges a `Collectible` to `InventoryManager` (adds an
   `ItemData` on collection), keeping `Collectible` itself item-agnostic.
+- `DialogueData`: a dialogue as a flat, index-linked list of `DialogueNode`s
+  (speaker name + `LocalizedString` text, optional branching `DialogueChoice`s) —
+  a lightweight custom format, not a third-party plugin/graph tool.
+  Dialogue text uses Unity's Localization package (`LocalizedString`).
+- `DialogueManager`: runs a `DialogueData` node by node
+  (`StartDialogue`/`Advance`/`SelectChoice`/`EndDialogue`), with no UI code
+  of its own — raises `DialogueStarted`/`NodeChanged`/`DialogueEnded` for a
+  future dialogue UI to subscribe to.
+- `DialogueTrigger`: starts a `DialogueData` in `DialogueManager` when
+  interacted with.
+- Package now also depends on `com.unity.localization`; the Runtime
+  assembly references `Unity.Localization`.
 
 ### Changed
 

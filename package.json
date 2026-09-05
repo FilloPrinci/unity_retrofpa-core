@@ -17,7 +17,8 @@
     "ps1"
   ],
   "dependencies": {
-    "com.unity.render-pipelines.universal": "17.3.0"
+    "com.unity.render-pipelines.universal": "17.3.0",
+    "com.unity.localization": "1.5.13"
   },
   "author": {
     "name": "FilloPrinci",

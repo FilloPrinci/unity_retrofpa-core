@@ -3,7 +3,8 @@
     "rootNamespace": "FilloPrinci.RetroFpa",
     "references": [
         "Unity.RenderPipelines.Core.Runtime",
-        "Unity.RenderPipelines.Universal.Runtime"
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.Localization"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
