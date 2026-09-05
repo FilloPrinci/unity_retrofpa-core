@@ -69,6 +69,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   interacted with.
 - Package now also depends on `com.unity.localization`; the Runtime
   assembly references `Unity.Localization`.
+- `DialogueDataEditor` (custom Inspector): replaces raw "Next Node Index"
+  integers with dropdowns listing every node (by index + text preview) plus
+  "End Dialogue" — no more counting node indices by hand.
+- `DialogueValidator` / `ItemValidator` (Retro FPA/Validate/... menu items):
+  scan all `DialogueData`/`ItemData` assets for structural issues (dangling
+  node references, unreachable nodes, empty/duplicate item ids, missing
+  icon/world prefab).
+- `RetroFpaWindow` (Window/Retro FPA/Dashboard): dock window running both
+  validators and listing their results.
 
 ### Changed
 
