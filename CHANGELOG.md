@@ -36,6 +36,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Subtract/Divide) via an Enum Keyword, always-on fresnel rim-light, and
   a code-driven additive flash — both fed into Emission.
 
+- `Rotator`: continuously rotates its object (e.g. a spinning collectible).
+- `Interactable`: generic "can be interacted with" building block, exposing
+  both a `UnityEvent` (Inspector-wired) and a C# event (code subscribers).
+- `Collectible`: requires `Interactable`; raises `Collected` once then
+  disables the object. Knows nothing about inventory/items — a future
+  InventoryManager hooks into the event instead.
+- `SceneChangeTrigger`: loads another level (via `LevelSceneManager`) when
+  the player enters its trigger volume.
+- `NpcBase`: wraps the Animator on NPC prefabs, with an
+  `AnimatorOverrideController` slot to remap a shared base controller's
+  placeholder clips onto a character's real clips.
+
 ### Changed
 
 - `FresnelPulse` now pulses once (min → max → min) and then holds at
