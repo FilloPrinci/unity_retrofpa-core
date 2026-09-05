@@ -92,6 +92,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   "Base Prefabs" sample. GUIDs preserved so existing scene references keep
   resolving after re-importing the sample.
 
+### Added
+
+- `FirstPersonController`: minimal first-person movement (CharacterController
+  move + mouse look), reading from Input System `InputActionReference`s.
+  No jump/crouch/sprint/head-bob yet.
+- `PlayerInteractor`: raycasts forward and calls `Interactable.Interact` on
+  hit, on the interact input.
+- `PlayerEquipmentController`: fires `InventoryManager.EquippedItem`'s
+  `EquippableBehavior.PerformAction` on the attack input.
+- Package now also depends on `com.unity.inputsystem`; the Runtime assembly
+  references `Unity.InputSystem`.
+
 ### Changed
 
 - `FresnelPulse` now pulses once (min → max → min) and then holds at

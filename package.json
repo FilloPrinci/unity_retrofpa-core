@@ -18,7 +18,8 @@
   ],
   "dependencies": {
     "com.unity.render-pipelines.universal": "17.3.0",
-    "com.unity.localization": "1.5.13"
+    "com.unity.localization": "1.5.13",
+    "com.unity.inputsystem": "1.19.0"
   },
   "samples": [
     {
