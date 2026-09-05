@@ -86,6 +86,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `NpcBase`/`WorldItemBase_Physical`/`WorldItemBase_Pickupable` prefabs and
+  the shared `NpcBaseController` + placeholder clips moved from the test
+  project into `Samples~/BasePrefabs`, declared in `package.json` as the
+  "Base Prefabs" sample. GUIDs preserved so existing scene references keep
+  resolving after re-importing the sample.
+
+### Changed
+
 - `FresnelPulse` now pulses once (min → max → min) and then holds at
   `minValue` for a configurable `pulsePause` (seconds) before repeating,
   instead of oscillating continuously.

@@ -20,6 +20,13 @@
     "com.unity.render-pipelines.universal": "17.3.0",
     "com.unity.localization": "1.5.13"
   },
+  "samples": [
+    {
+      "displayName": "Base Prefabs",
+      "description": "NpcBase (Animator + shared placeholder AnimatorController with an AnimatorOverrideController slot) and WorldItemBase (Physical/Pickupable variants), ready to import and use as a starting point.",
+      "path": "Samples~/BasePrefabs"
+    }
+  ],
   "author": {
     "name": "FilloPrinci",
     "url": "https://github.com/FilloPrinci"
