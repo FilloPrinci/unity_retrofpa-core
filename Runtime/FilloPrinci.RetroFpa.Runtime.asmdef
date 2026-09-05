@@ -1,0 +1,14 @@
+{
+    "name": "FilloPrinci.RetroFpa.Runtime",
+    "rootNamespace": "FilloPrinci.RetroFpa",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,29 @@
+# This is a UPM package, not a standalone Unity project, but it can still
+# accumulate IDE/tooling artifacts if opened directly (e.g. via a sample
+# project or a solution generated for the package folder alone).
+
+# Unity-generated folders (only relevant if this package is ever opened
+# directly as a project root)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+*.log
+
+# IDE / tooling
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.pdb
+*.mdb
+*.suo
+*.DotSettings.user
+
+# OS artifacts
+.DS_Store
+Thumbs.db

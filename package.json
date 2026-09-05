@@ -1,0 +1,23 @@
+{
+  "name": "com.filloprinci.retrofpa",
+  "version": "0.1.0",
+  "displayName": "Retro FPA Core",
+  "description": "Reusable runtime and editor toolkit for building retro low-poly (PS1/N64/GameCube-era) first-person horror/adventure games in Unity. Provides decoupled managers, data-driven ScriptableObjects, ready-to-place prefabs, and editor tooling (dialogue/item authoring, validators).",
+  "unity": "6000.3",
+  "unityRelease": "17f1",
+  "documentationUrl": "https://github.com/FilloPrinci/unity_retrofpa-core#readme",
+  "changelogUrl": "https://github.com/FilloPrinci/unity_retrofpa-core/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/FilloPrinci/unity_retrofpa-core/blob/main/LICENSE",
+  "keywords": [
+    "retro",
+    "low-poly",
+    "first-person",
+    "horror",
+    "toolkit",
+    "ps1"
+  ],
+  "author": {
+    "name": "FilloPrinci",
+    "url": "https://github.com/FilloPrinci"
+  }
+}
