@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   after each load.
 - `SpawnPoint` component, with an id to disambiguate multiple spawn points
   per level.
+- `GameBootstrapper`: drop-in component that triggers the first level load
+  on startup, configured entirely from the Inspector (no project-specific
+  code required).
 
 ## [0.1.0] - 2026-09-05
 
