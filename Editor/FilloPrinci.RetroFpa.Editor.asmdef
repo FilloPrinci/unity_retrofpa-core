@@ -2,7 +2,8 @@
     "name": "FilloPrinci.RetroFpa.Editor",
     "rootNamespace": "FilloPrinci.RetroFpa.Editor",
     "references": [
-        "FilloPrinci.RetroFpa.Runtime"
+        "FilloPrinci.RetroFpa.Runtime",
+        "Unity.Localization"
     ],
     "includePlatforms": [
         "Editor"

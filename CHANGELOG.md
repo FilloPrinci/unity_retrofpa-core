@@ -79,6 +79,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RetroFpaWindow` (Window/Retro FPA/Dashboard): dock window running both
   validators and listing their results.
 
+### Fixed
+
+- Editor assembly now references `Unity.Localization` (needed to resolve
+  `DialogueNode.Text`'s `LocalizedString` type from `DialogueDataEditor`).
+
 ### Changed
 
 - `FresnelPulse` now pulses once (min → max → min) and then holds at
