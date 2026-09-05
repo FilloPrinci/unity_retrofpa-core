@@ -16,6 +16,9 @@
     "toolkit",
     "ps1"
   ],
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "17.3.0"
+  },
   "author": {
     "name": "FilloPrinci",
     "url": "https://github.com/FilloPrinci"

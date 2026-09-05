@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GameBootstrapper`: drop-in component that triggers the first level load
   on startup, configured entirely from the Inspector (no project-specific
   code required).
+- `VisualStyleProfile`: data-driven fog/ambient/color-adjustments/bloom/
+  tonemapping style, applied to RenderSettings and a URP `VolumeProfile`.
+- `StyleManager`: applies a `VisualStyleProfile` to a persistent global
+  `Volume`; switching style is just assigning a different profile.
+- Package now depends on `com.unity.render-pipelines.universal`; the
+  Runtime assembly references the URP/Core Rendering assemblies.
 
 ## [0.1.0] - 2026-09-05
 
