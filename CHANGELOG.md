@@ -47,6 +47,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NpcBase`: wraps the Animator on NPC prefabs, with an
   `AnimatorOverrideController` slot to remap a shared base controller's
   placeholder clips onto a character's real clips.
+- `ItemData`: data describing one kind of item (id, name, description, icon,
+  world prefab, max stack size), with an optional `EquippableBehavior` for
+  equippable items.
+- `EquippableBehavior` (abstract) + `MeleeEquippableBehavior` /
+  `RangedEquippableBehavior`: define OnEquip/OnUnequip/PerformAction for
+  weapons; actual hit detection/damage is left to a future combat system.
+- `InventoryManager`: stacks `ItemData` by `MaxStackSize`, tracks the
+  currently equipped item, raises `ItemChanged`/`EquippedItemChanged`.
+- `CollectibleItem`: bridges a `Collectible` to `InventoryManager` (adds an
+  `ItemData` on collection), keeping `Collectible` itself item-agnostic.
 
 ### Changed
 
