@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Volume`; switching style is just assigning a different profile.
 - Package now depends on `com.unity.render-pipelines.universal`; the
   Runtime assembly references the URP/Core Rendering assemblies.
+- `FresnelPulse`: pulses a shader fresnel-intensity property via
+  `MaterialPropertyBlock` (never clones/animates the shared Material).
+  Expects the future 2-layer retro Shader Graph to expose a matching
+  float property (`_FresnelPulse` by default).
 
 ## [0.1.0] - 2026-09-05
 
