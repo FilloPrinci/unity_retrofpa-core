@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `PersistentSingleton<T>`: base class for MonoBehaviour singletons that
+  survive additive scene loads (Unity equivalent of a Godot autoload).
+- `GameManager`: tracks `GameState` (Boot/Loading/Playing/Paused), reacts to
+  `LevelSceneManager`'s events, drives `Time.timeScale` on pause.
+- `LevelSceneManager`: additive level loading/unloading (never
+  `LoadSceneMode.Single`), places a persistent player root at a `SpawnPoint`
+  after each load.
+- `SpawnPoint` component, with an id to disambiguate multiple spawn points
+  per level.
+
 ## [0.1.0] - 2026-09-05
 
 ### Added
