@@ -83,6 +83,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Editor assembly now references `Unity.Localization` (needed to resolve
   `DialogueNode.Text`'s `LocalizedString` type from `DialogueDataEditor`).
+- `PlayerEquipmentController`, `CollectibleItem`, `DialogueTrigger`,
+  `GameBootstrapper`, `SceneChangeTrigger`: guard against the relevant
+  manager singleton not existing in the scene (logs a clear error instead
+  of throwing a `NullReferenceException`).
 
 ### Changed
 

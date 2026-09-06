@@ -39,6 +39,12 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
+            if (InventoryManager.Instance == null)
+            {
+                Debug.LogError("[CollectibleItem] No InventoryManager in the scene.", this);
+                return;
+            }
+
             InventoryManager.Instance.AddItem(item, quantity);
         }
     }

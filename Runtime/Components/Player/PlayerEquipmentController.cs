@@ -32,6 +32,12 @@ namespace FilloPrinci.RetroFpa
 
         private void HandleAttackPerformed(InputAction.CallbackContext context)
         {
+            if (InventoryManager.Instance == null)
+            {
+                Debug.LogError("[PlayerEquipmentController] No InventoryManager in the scene.", this);
+                return;
+            }
+
             ItemData equipped = InventoryManager.Instance.EquippedItem;
             equipped?.EquippableBehavior?.PerformAction(gameObject);
         }

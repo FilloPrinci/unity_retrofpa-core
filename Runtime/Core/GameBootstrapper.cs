@@ -27,6 +27,12 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
+            if (LevelSceneManager.Instance == null)
+            {
+                Debug.LogError("[GameBootstrapper] No LevelSceneManager in the scene.", this);
+                return;
+            }
+
             LevelSceneManager.Instance.LoadLevel(startingLevelSceneName, startingSpawnPointId);
         }
     }

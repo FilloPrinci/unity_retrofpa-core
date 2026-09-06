@@ -36,6 +36,12 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
+            if (DialogueManager.Instance == null)
+            {
+                Debug.LogError("[DialogueTrigger] No DialogueManager in the scene.", this);
+                return;
+            }
+
             DialogueManager.Instance.StartDialogue(dialogue);
         }
     }
