@@ -39,12 +39,25 @@ namespace FilloPrinci.RetroFpa
         {
             moveAction?.action.Enable();
             lookAction?.action.Enable();
+            SetCursorLocked(true);
         }
 
         private void OnDisable()
         {
             moveAction?.action.Disable();
             lookAction?.action.Disable();
+            SetCursorLocked(false);
+        }
+
+        /// <summary>
+        /// Locks/hides (or frees/shows) the cursor. Exposed so a future UI
+        /// (pause menu, inventory screen, ...) can release the cursor while
+        /// open, without this controller needing to know about that UI.
+        /// </summary>
+        public static void SetCursorLocked(bool locked)
+        {
+            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !locked;
         }
 
         private void Update()

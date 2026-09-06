@@ -100,7 +100,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `FirstPersonController`: minimal first-person movement (CharacterController
   move + mouse look), reading from Input System `InputActionReference`s.
-  No jump/crouch/sprint/head-bob yet.
+  No jump/crouch/sprint/head-bob yet. Locks and hides the cursor while
+  enabled; exposes a static `SetCursorLocked` for a future UI (pause menu,
+  inventory) to release it without this controller knowing about that UI.
 - `PlayerInteractor`: raycasts forward and calls `Interactable.Interact` on
   hit, on the interact input.
 - `PlayerEquipmentController`: fires `InventoryManager.EquippedItem`'s
