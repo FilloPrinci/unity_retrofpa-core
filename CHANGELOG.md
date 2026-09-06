@@ -109,6 +109,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `EquippableBehavior.PerformAction` on the attack input.
 - Package now also depends on `com.unity.inputsystem`; the Runtime assembly
   references `Unity.InputSystem`.
+- `UIScreen`: base class for a `CanvasGroup`-driven show/hide UI panel;
+  tracks how many screens are visible across the whole game so the cursor
+  only re-locks once none are.
+- `DialogueUIController`: speaker/text/choice-or-continue UI driven by
+  `DialogueManager`'s events.
+- `InventoryUIController` + `InventorySlotUI`: toggleable inventory screen
+  listing `InventoryManager`'s entries.
+- `InteractionPromptUI`: shows `Interactable.PromptText` (or a default)
+  while looking at an interactable object.
+- `MainMenuUIController`: "New Game" calls `GameBootstrapper.StartGame`;
+  "Quit" exits.
+- `PauseMenuUIController`: toggled by the UI action map's Cancel action;
+  pause/resume goes through `GameManager.SetGameState`.
+- `PlayerInteractor` now raycasts every frame (not just on interact) and
+  raises a static `LookTargetChanged` event, for `InteractionPromptUI`.
+- `GameBootstrapper` gained `autoStartOnAwake` (default true) and a public
+  `StartGame()`, so a main menu can gate the first level load instead of
+  it happening automatically.
+- Package now also depends on `com.unity.ugui`; the Runtime assembly
+  references `UnityEngine.UI` and `Unity.TextMeshPro`.
 
 ### Changed
 
