@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 
 namespace FilloPrinci.RetroFpa
@@ -15,11 +17,32 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private Button newGameButton;
         [SerializeField] private Button quitButton;
 
+        [Header("Localization")]
+        [SerializeField] private LocalizedString newGameLabel;
+        [SerializeField] private LocalizedString quitLabel;
+
         protected override void Awake()
         {
             base.Awake();
             newGameButton?.onClick.AddListener(HandleNewGameClicked);
             quitButton?.onClick.AddListener(HandleQuitClicked);
+
+            ApplyLabel(newGameButton, newGameLabel);
+            ApplyLabel(quitButton, quitLabel);
+        }
+
+        private static void ApplyLabel(Button button, LocalizedString label)
+        {
+            if (button == null || label.IsEmpty)
+            {
+                return;
+            }
+
+            TMP_Text text = button.GetComponentInChildren<TMP_Text>();
+            if (text != null)
+            {
+                text.text = label.GetLocalizedString();
+            }
         }
 
         private void HandleNewGameClicked()

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 
 namespace FilloPrinci.RetroFpa
@@ -18,7 +19,24 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private RectTransform choicesContainer;
         [SerializeField] private Button choiceButtonPrefab;
 
+        [Header("Localization")]
+        [SerializeField] private LocalizedString continueLabel;
+
         private readonly List<Button> spawnedChoiceButtons = new();
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            if (continueButton != null && !continueLabel.IsEmpty)
+            {
+                TMP_Text label = continueButton.GetComponentInChildren<TMP_Text>();
+                if (label != null)
+                {
+                    label.text = continueLabel.GetLocalizedString();
+                }
+            }
+        }
 
         private void OnEnable()
         {

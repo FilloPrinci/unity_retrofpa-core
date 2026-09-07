@@ -99,6 +99,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   setting the Transform directly, which left stale fall velocity from
   before the teleport and could tunnel the player through the floor.
   Also added a `maxFallSpeed` clamp.
+- `MainMenuUIController`, `PauseMenuUIController`, `DialogueUIController`:
+  added `LocalizedString` label fields (New Game/Quit, Resume/Quit,
+  Continue) applied to each button's child `TMP_Text` on `Awake`, so
+  static button labels go through Localization instead of being hardcoded
+  in the Inspector.
 - `UIScreen`: screens with `hiddenOnStart` true were never actually hidden
   at startup. A fresh `CanvasGroup` defaults to alpha 1 regardless of
   `hiddenOnStart`, and the old `Start()` routed through the same
