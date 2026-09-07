@@ -50,6 +50,16 @@ namespace FilloPrinci.RetroFpa
 
         private void Update()
         {
+            if (!FirstPersonController.IsCursorLocked)
+            {
+                if (currentTarget != null)
+                {
+                    currentTarget = null;
+                    LookTargetChanged?.Invoke(null);
+                }
+                return;
+            }
+
             UpdateLookTarget();
         }
 
@@ -67,6 +77,11 @@ namespace FilloPrinci.RetroFpa
 
         private void HandleInteractPerformed(InputAction.CallbackContext context)
         {
+            if (!FirstPersonController.IsCursorLocked)
+            {
+                return;
+            }
+
             currentTarget?.Interact(gameObject);
         }
 

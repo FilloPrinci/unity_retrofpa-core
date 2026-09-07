@@ -32,6 +32,11 @@ namespace FilloPrinci.RetroFpa
 
         private void HandleAttackPerformed(InputAction.CallbackContext context)
         {
+            if (!FirstPersonController.IsCursorLocked)
+            {
+                return;
+            }
+
             if (InventoryManager.Instance == null)
             {
                 Debug.LogError("[PlayerEquipmentController] No InventoryManager in the scene.", this);

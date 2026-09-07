@@ -122,7 +122,14 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
-            persistentPlayerRoot.SetPositionAndRotation(target.transform.position, target.transform.rotation);
+            if (persistentPlayerRoot.TryGetComponent(out ITeleportable teleportable))
+            {
+                teleportable.Teleport(target.transform.position, target.transform.rotation);
+            }
+            else
+            {
+                persistentPlayerRoot.SetPositionAndRotation(target.transform.position, target.transform.rotation);
+            }
         }
     }
 }

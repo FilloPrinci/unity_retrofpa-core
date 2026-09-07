@@ -87,6 +87,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `GameBootstrapper`, `SceneChangeTrigger`: guard against the relevant
   manager singleton not existing in the scene (logs a clear error instead
   of throwing a `NullReferenceException`).
+- `FirstPersonController`, `PlayerInteractor`, `PlayerEquipmentController`:
+  gameplay input (look/move/interact/attack) now gated on
+  `FirstPersonController.IsCursorLocked`, so it stops while any UI screen
+  is open instead of still reading mouse look / raycasting / firing
+  actions underneath the menu.
+- `FirstPersonController.Teleport` (implements new `ITeleportable`)
+  properly resets accumulated fall velocity and briefly disables the
+  `CharacterController` during the move; `LevelSceneManager` now calls
+  this (falling back to a plain Transform move) instead of only ever
+  setting the Transform directly, which left stale fall velocity from
+  before the teleport and could tunnel the player through the floor.
+  Also added a `maxFallSpeed` clamp.
 - `UIScreen`: screens with `hiddenOnStart` true were never actually hidden
   at startup. A fresh `CanvasGroup` defaults to alpha 1 regardless of
   `hiddenOnStart`, and the old `Start()` routed through the same

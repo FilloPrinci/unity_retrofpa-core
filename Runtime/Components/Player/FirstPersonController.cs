@@ -10,7 +10,7 @@ namespace FilloPrinci.RetroFpa
     /// yet — deliberately minimal, extend later.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class FirstPersonController : MonoBehaviour
+    public class FirstPersonController : MonoBehaviour, ITeleportable
     {
         [Header("Input")]
         [SerializeField] private InputActionReference moveAction;
@@ -19,6 +19,7 @@ namespace FilloPrinci.RetroFpa
         [Header("Movement")]
         [SerializeField] private float moveSpeed = 4f;
         [SerializeField] private float gravity = -20f;
+        [SerializeField] private float maxFallSpeed = 20f;
 
         [Header("Look")]
         [SerializeField] private Transform cameraTransform;
@@ -29,6 +30,9 @@ namespace FilloPrinci.RetroFpa
         private CharacterController controller;
         private float pitch;
         private float verticalVelocity;
+
+        /// <summary>True while the cursor is locked — i.e. while no UI screen is capturing input.</summary>
+        public static bool IsCursorLocked { get; private set; }
 
         private void Awake()
         {
@@ -50,18 +54,35 @@ namespace FilloPrinci.RetroFpa
         }
 
         /// <summary>
-        /// Locks/hides (or frees/shows) the cursor. Exposed so a future UI
-        /// (pause menu, inventory screen, ...) can release the cursor while
-        /// open, without this controller needing to know about that UI.
+        /// Locks/hides (or frees/shows) the cursor, and gates gameplay input
+        /// (look/move/interact/attack) on it via <see cref="IsCursorLocked"/>.
+        /// Exposed so a UI screen (pause menu, inventory, ...) can release
+        /// the cursor — and gameplay input with it — while open, without
+        /// this controller needing to know about that UI.
         /// </summary>
         public static void SetCursorLocked(bool locked)
         {
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !locked;
+            IsCursorLocked = locked;
+        }
+
+        /// <summary>Moves this controller to <paramref name="position"/>/<paramref name="rotation"/>, resetting accumulated fall velocity (a plain Transform move would leave stale velocity from before the teleport).</summary>
+        public void Teleport(Vector3 position, Quaternion rotation)
+        {
+            controller.enabled = false;
+            transform.SetPositionAndRotation(position, rotation);
+            verticalVelocity = 0f;
+            controller.enabled = true;
         }
 
         private void Update()
         {
+            if (!IsCursorLocked)
+            {
+                return;
+            }
+
             ApplyLook();
             ApplyMove();
         }
@@ -93,7 +114,7 @@ namespace FilloPrinci.RetroFpa
             {
                 verticalVelocity = -1f;
             }
-            verticalVelocity += gravity * Time.deltaTime;
+            verticalVelocity = Mathf.Max(verticalVelocity + gravity * Time.deltaTime, -maxFallSpeed);
 
             Vector3 velocity = move * moveSpeed + Vector3.up * verticalVelocity;
             controller.Move(velocity * Time.deltaTime);
