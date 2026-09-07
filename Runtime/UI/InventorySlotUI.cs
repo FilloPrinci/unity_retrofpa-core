@@ -21,7 +21,7 @@ namespace FilloPrinci.RetroFpa
 
             if (nameText != null)
             {
-                nameText.text = item.DisplayName;
+                nameText.text = item.DisplayName.GetLocalizedString();
             }
 
             if (quantityText != null)

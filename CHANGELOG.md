@@ -132,6 +132,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `Interactable.PromptText`, `ItemData.DisplayName`, `ItemData.Description`
+  changed from plain `string` to `LocalizedString`, so item names/
+  descriptions and interaction prompts go through the Localization package
+  like `DialogueData` already did. `InventorySlotUI`/`InteractionPromptUI`
+  resolve them via `GetLocalizedString()`. `ItemValidator` updated
+  (`DisplayName.IsEmpty` instead of `string.IsNullOrEmpty`).
+  Note: existing `ItemData` assets authored before this change will have
+  their Display Name/Description reset to empty (Unity doesn't migrate a
+  field's serialized value across an incompatible type change) — re-enter
+  them via the Localization workflow.
+
+### Changed
+
 - `FresnelPulse` now pulses once (min → max → min) and then holds at
   `minValue` for a configurable `pulsePause` (seconds) before repeating,
   instead of oscillating continuously.

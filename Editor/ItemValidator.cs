@@ -40,7 +40,7 @@ namespace FilloPrinci.RetroFpa.Editor
                 seenIds[item.ItemId] = path;
             }
 
-            if (string.IsNullOrEmpty(item.DisplayName))
+            if (item.DisplayName.IsEmpty)
             {
                 Report(messages, item, $"{path}: Display Name is empty.");
             }

@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace FilloPrinci.RetroFpa
 {
@@ -12,8 +13,10 @@ namespace FilloPrinci.RetroFpa
     {
         [SerializeField] private GameObject promptRoot;
         [SerializeField] private TMP_Text promptText;
-        [SerializeField] private string defaultPrompt = "Interact";
-        [SerializeField] private string keyLabel = "[E]";
+        [SerializeField] private LocalizedString defaultPrompt;
+        [Tooltip("Not localized — a key/button name, shown as-is regardless of language.")]
+        [SerializeField]
+        private string keyLabel = "[E]";
 
         private void OnEnable()
         {
@@ -32,8 +35,8 @@ namespace FilloPrinci.RetroFpa
 
             if (target != null && promptText != null)
             {
-                string label = string.IsNullOrEmpty(target.PromptText) ? defaultPrompt : target.PromptText;
-                promptText.text = $"{keyLabel} {label}";
+                LocalizedString label = target.PromptText.IsEmpty ? defaultPrompt : target.PromptText;
+                promptText.text = $"{keyLabel} {label.GetLocalizedString()}";
             }
         }
 

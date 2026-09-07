@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Localization;
 
 namespace FilloPrinci.RetroFpa
 {
@@ -13,14 +14,14 @@ namespace FilloPrinci.RetroFpa
     /// </summary>
     public class Interactable : MonoBehaviour
     {
-        [Tooltip("Optional prompt text a future UI could show while this object is interactable.")]
+        [Tooltip("Optional prompt text a future UI could show while this object is interactable. Leave empty for a generic default.")]
         [SerializeField]
-        private string promptText;
+        private LocalizedString promptText;
 
         [SerializeField]
         private UnityEvent<GameObject> onInteract;
 
-        public string PromptText => promptText;
+        public LocalizedString PromptText => promptText;
 
         /// <summary>Raised whenever <see cref="Interact"/> is called, passing the interactor.</summary>
         public event Action<GameObject> Interacted;

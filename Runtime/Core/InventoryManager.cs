@@ -119,7 +119,7 @@ namespace FilloPrinci.RetroFpa
         {
             if (item == null || !item.IsEquippable || !HasItem(item))
             {
-                Debug.LogWarning($"[InventoryManager] Cannot equip '{item?.DisplayName}': not held or not equippable.", this);
+                Debug.LogWarning($"[InventoryManager] Cannot equip '{item?.name}': not held or not equippable.", this);
                 return;
             }
 
