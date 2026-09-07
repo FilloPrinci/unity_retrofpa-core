@@ -28,7 +28,21 @@ namespace FilloPrinci.RetroFpa
 
         protected virtual void Start()
         {
-            SetVisible(!hiddenOnStart);
+            // Applied directly (not via SetVisible) because a fresh
+            // CanvasGroup added in the Inspector defaults to alpha 1
+            // regardless of hiddenOnStart — a hidden-on-start screen was
+            // never counted as "visible" in visibleScreenCount to begin
+            // with, so only screens that start visible need to register.
+            IsVisible = !hiddenOnStart;
+            canvasGroup.alpha = IsVisible ? 1f : 0f;
+            canvasGroup.interactable = IsVisible;
+            canvasGroup.blocksRaycasts = IsVisible;
+
+            if (unlocksCursorWhileVisible && IsVisible)
+            {
+                visibleScreenCount++;
+                FirstPersonController.SetCursorLocked(visibleScreenCount == 0);
+            }
         }
 
         protected virtual void OnDisable()

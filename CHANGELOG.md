@@ -87,6 +87,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `GameBootstrapper`, `SceneChangeTrigger`: guard against the relevant
   manager singleton not existing in the scene (logs a clear error instead
   of throwing a `NullReferenceException`).
+- `UIScreen`: screens with `hiddenOnStart` true were never actually hidden
+  at startup. A fresh `CanvasGroup` defaults to alpha 1 regardless of
+  `hiddenOnStart`, and the old `Start()` routed through the same
+  equal-value-skips-update guard used by `Show`/`Hide`, so the initial
+  "hide" call for a screen whose `IsVisible` field already defaulted to
+  `false` was silently skipped. `Start()` now applies the initial
+  alpha/interactable/cursor-count state directly instead of going through
+  that guard.
 
 ### Changed
 
