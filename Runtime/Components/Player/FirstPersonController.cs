@@ -44,6 +44,7 @@ namespace FilloPrinci.RetroFpa
             moveAction?.action.Enable();
             lookAction?.action.Enable();
             SetCursorLocked(true);
+            SettingsManager.LookSensitivityChanged += HandleLookSensitivityChanged;
         }
 
         private void OnDisable()
@@ -51,7 +52,10 @@ namespace FilloPrinci.RetroFpa
             moveAction?.action.Disable();
             lookAction?.action.Disable();
             SetCursorLocked(false);
+            SettingsManager.LookSensitivityChanged -= HandleLookSensitivityChanged;
         }
+
+        private void HandleLookSensitivityChanged(float value) => lookSensitivity = value;
 
         /// <summary>
         /// Locks/hides (or frees/shows) the cursor, and gates gameplay input

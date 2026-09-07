@@ -100,10 +100,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   before the teleport and could tunnel the player through the floor.
   Also added a `maxFallSpeed` clamp.
 - `MainMenuUIController`, `PauseMenuUIController`, `DialogueUIController`:
-  added `LocalizedString` label fields (New Game/Quit, Resume/Quit,
-  Continue) applied to each button's child `TMP_Text` on `Awake`, so
-  static button labels go through Localization instead of being hardcoded
-  in the Inspector.
+  added `LocalizedString` label fields (New Game/Settings/Quit,
+  Resume/Settings/Quit, Continue) applied to each button's child
+  `TMP_Text` on `Awake`, so static button labels go through Localization
+  instead of being hardcoded in the Inspector.
+- `SettingsManager`: loads/saves/applies master/music/sfx volume, look
+  sensitivity, locale, vsync and resolution via `PlayerPrefs` — persists
+  across sessions. Reacted to via static events
+  (`MasterVolumeChanged`/`MusicVolumeChanged`/`SfxVolumeChanged`/
+  `LookSensitivityChanged`/`LocaleChanged`) rather than reaching into other
+  systems directly; `FirstPersonController` listens for
+  `LookSensitivityChanged`. Music/SFX volume are stored and exposed for a
+  future audio system to consume — none exists yet.
+- `SettingsUIController`: settings screen (sliders for volumes/look
+  sensitivity, a language dropdown, a vsync toggle, a resolution
+  dropdown), opened as an overlay from the main menu and/or pause menu's
+  new "Settings" button (`settingsScreen` field on each).
 - `UIScreen`: screens with `hiddenOnStart` true were never actually hidden
   at startup. A fresh `CanvasGroup` defaults to alpha 1 regardless of
   `hiddenOnStart`, and the old `Start()` routed through the same

@@ -10,25 +10,31 @@ namespace FilloPrinci.RetroFpa
     /// Pause menu, toggled by <see cref="toggleAction"/> (typically the UI
     /// action map's "Cancel", bound to Escape). Pausing/resuming goes
     /// through <see cref="GameManager.SetGameState"/>, which also drives
-    /// <see cref="Time.timeScale"/>.
+    /// <see cref="Time.timeScale"/>. "Settings" opens <see cref="settingsScreen"/>
+    /// as an overlay.
     /// </summary>
     public class PauseMenuUIController : UIScreen
     {
         [SerializeField] private InputActionReference toggleAction;
         [SerializeField] private Button resumeButton;
+        [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
+        [SerializeField] private UIScreen settingsScreen;
 
         [Header("Localization")]
         [SerializeField] private LocalizedString resumeLabel;
+        [SerializeField] private LocalizedString settingsLabel;
         [SerializeField] private LocalizedString quitLabel;
 
         protected override void Awake()
         {
             base.Awake();
             resumeButton?.onClick.AddListener(Resume);
+            settingsButton?.onClick.AddListener(HandleSettingsClicked);
             quitButton?.onClick.AddListener(HandleQuitClicked);
 
             ApplyLabel(resumeButton, resumeLabel);
+            ApplyLabel(settingsButton, settingsLabel);
             ApplyLabel(quitButton, quitLabel);
         }
 
@@ -87,6 +93,8 @@ namespace FilloPrinci.RetroFpa
             Hide();
             GameManager.Instance?.SetGameState(GameState.Playing);
         }
+
+        private void HandleSettingsClicked() => settingsScreen?.Show();
 
         private void HandleQuitClicked()
         {
