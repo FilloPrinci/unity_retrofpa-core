@@ -32,8 +32,24 @@ namespace FilloPrinci.RetroFpa
 
         [SerializeField] private Button closeButton;
 
+        [Header("Row Labels")]
+        [SerializeField] private TMP_Text masterVolumeLabelText;
+        [SerializeField] private TMP_Text musicVolumeLabelText;
+        [SerializeField] private TMP_Text sfxVolumeLabelText;
+        [SerializeField] private TMP_Text lookSensitivityLabelText;
+        [SerializeField] private TMP_Text languageLabelText;
+        [SerializeField] private TMP_Text vsyncLabelText;
+        [SerializeField] private TMP_Text resolutionLabelText;
+
         [Header("Localization")]
         [SerializeField] private LocalizedString closeLabel;
+        [SerializeField] private LocalizedString masterVolumeLabel;
+        [SerializeField] private LocalizedString musicVolumeLabel;
+        [SerializeField] private LocalizedString sfxVolumeLabel;
+        [SerializeField] private LocalizedString lookSensitivityLabel;
+        [SerializeField] private LocalizedString languageLabel;
+        [SerializeField] private LocalizedString vsyncLabel;
+        [SerializeField] private LocalizedString resolutionLabel;
 
         private readonly List<Locale> availableLocales = new();
         private Resolution[] availableResolutions;
@@ -43,13 +59,21 @@ namespace FilloPrinci.RetroFpa
             base.Awake();
             closeButton?.onClick.AddListener(Hide);
 
-            if (closeButton != null && !closeLabel.IsEmpty)
+            ApplyLabel(closeButton != null ? closeButton.GetComponentInChildren<TMP_Text>() : null, closeLabel);
+            ApplyLabel(masterVolumeLabelText, masterVolumeLabel);
+            ApplyLabel(musicVolumeLabelText, musicVolumeLabel);
+            ApplyLabel(sfxVolumeLabelText, sfxVolumeLabel);
+            ApplyLabel(lookSensitivityLabelText, lookSensitivityLabel);
+            ApplyLabel(languageLabelText, languageLabel);
+            ApplyLabel(vsyncLabelText, vsyncLabel);
+            ApplyLabel(resolutionLabelText, resolutionLabel);
+        }
+
+        private static void ApplyLabel(TMP_Text target, LocalizedString label)
+        {
+            if (target != null && !label.IsEmpty)
             {
-                TMP_Text label = closeButton.GetComponentInChildren<TMP_Text>();
-                if (label != null)
-                {
-                    label.text = closeLabel.GetLocalizedString();
-                }
+                target.text = label.GetLocalizedString();
             }
         }
 
