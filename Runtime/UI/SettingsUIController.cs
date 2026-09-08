@@ -32,6 +32,9 @@ namespace FilloPrinci.RetroFpa
 
         [SerializeField] private Button closeButton;
 
+        [Header("Localization")]
+        [SerializeField] private LocalizedString closeLabel;
+
         private readonly List<Locale> availableLocales = new();
         private Resolution[] availableResolutions;
 
@@ -39,6 +42,15 @@ namespace FilloPrinci.RetroFpa
         {
             base.Awake();
             closeButton?.onClick.AddListener(Hide);
+
+            if (closeButton != null && !closeLabel.IsEmpty)
+            {
+                TMP_Text label = closeButton.GetComponentInChildren<TMP_Text>();
+                if (label != null)
+                {
+                    label.text = closeLabel.GetLocalizedString();
+                }
+            }
         }
 
         private void OnEnable()

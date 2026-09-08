@@ -115,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SettingsUIController`: settings screen (sliders for volumes/look
   sensitivity, a language dropdown, a vsync toggle, a resolution
   dropdown), opened as an overlay from the main menu and/or pause menu's
-  new "Settings" button (`settingsScreen` field on each).
+  new "Settings" button (`settingsScreen` field on each). Added a
+  `closeLabel` field, applied the same way as the other button labels.
 - `UIScreen`: screens with `hiddenOnStart` true were never actually hidden
   at startup. A fresh `CanvasGroup` defaults to alpha 1 regardless of
   `hiddenOnStart`, and the old `Start()` routed through the same
