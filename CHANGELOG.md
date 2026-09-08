@@ -119,7 +119,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `closeLabel` field, applied the same way as the other button labels.
   Added a row-label `TMP_Text` + `LocalizedString` pair per control
   (master/music/sfx volume, look sensitivity, language, vsync,
-  resolution) — the controls had no text explaining what they were.
+  fullscreen, resolution) — the controls had no text explaining what they
+  were.
+- `SettingsManager`/`SettingsUIController`: added a Fullscreen toggle
+  (`Screen.fullScreenMode`, `FullScreenWindow` vs `Windowed`), persisted
+  like the other settings.
 - `UIScreen`: screens with `hiddenOnStart` true were never actually hidden
   at startup. A fresh `CanvasGroup` defaults to alpha 1 regardless of
   `hiddenOnStart`, and the old `Start()` routed through the same

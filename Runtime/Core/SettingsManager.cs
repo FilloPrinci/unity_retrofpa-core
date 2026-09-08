@@ -7,7 +7,7 @@ namespace FilloPrinci.RetroFpa
 {
     /// <summary>
     /// Loads/saves/applies user-facing settings (audio volumes, look
-    /// sensitivity, language, vsync/resolution) via <see cref="PlayerPrefs"/>,
+    /// sensitivity, language, vsync/fullscreen/resolution) via <see cref="PlayerPrefs"/>,
     /// persisting them across sessions. Other systems react via static
     /// events (e.g. <see cref="FirstPersonController"/> listens for
     /// <see cref="LookSensitivityChanged"/>) instead of this manager
@@ -21,6 +21,7 @@ namespace FilloPrinci.RetroFpa
         private const string LookSensitivityKey = "Settings.LookSensitivity";
         private const string LocaleKey = "Settings.Locale";
         private const string VSyncKey = "Settings.VSync";
+        private const string FullscreenKey = "Settings.Fullscreen";
         private const string ResolutionWidthKey = "Settings.ResolutionWidth";
         private const string ResolutionHeightKey = "Settings.ResolutionHeight";
 
@@ -43,6 +44,7 @@ namespace FilloPrinci.RetroFpa
         public float MusicVolume { get; private set; } = 1f;
         public float SfxVolume { get; private set; } = 1f;
         public bool VSyncEnabled { get; private set; } = true;
+        public bool FullscreenEnabled { get; private set; } = true;
 
         protected override void Awake()
         {
@@ -62,6 +64,7 @@ namespace FilloPrinci.RetroFpa
             SetMusicVolume(PlayerPrefs.GetFloat(MusicVolumeKey, 1f));
             SetSfxVolume(PlayerPrefs.GetFloat(SfxVolumeKey, 1f));
             SetVSyncEnabled(PlayerPrefs.GetInt(VSyncKey, 1) == 1);
+            SetFullscreenEnabled(PlayerPrefs.GetInt(FullscreenKey, 1) == 1);
 
             // No default baked in here: leave FirstPersonController's own
             // Inspector-configured default alone until the player actually
@@ -125,6 +128,14 @@ namespace FilloPrinci.RetroFpa
             VSyncEnabled = enabled;
             QualitySettings.vSyncCount = enabled ? 1 : 0;
             PlayerPrefs.SetInt(VSyncKey, enabled ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
+        public void SetFullscreenEnabled(bool enabled)
+        {
+            FullscreenEnabled = enabled;
+            Screen.fullScreenMode = enabled ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+            PlayerPrefs.SetInt(FullscreenKey, enabled ? 1 : 0);
             PlayerPrefs.Save();
         }
 

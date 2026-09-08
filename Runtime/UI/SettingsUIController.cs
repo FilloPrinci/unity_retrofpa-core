@@ -8,8 +8,8 @@ using UnityEngine.UI;
 namespace FilloPrinci.RetroFpa
 {
     /// <summary>
-    /// Settings screen: audio volumes, look sensitivity, language, vsync and
-    /// resolution — all read from/written to <see cref="SettingsManager"/>,
+    /// Settings screen: audio volumes, look sensitivity, language,
+    /// vsync/fullscreen/resolution — all read from/written to <see cref="SettingsManager"/>,
     /// which persists them across sessions. Opened as an overlay from the
     /// main menu and/or pause menu (see their <c>settingsScreen</c> field).
     /// </summary>
@@ -28,6 +28,7 @@ namespace FilloPrinci.RetroFpa
 
         [Header("Graphics")]
         [SerializeField] private Toggle vsyncToggle;
+        [SerializeField] private Toggle fullscreenToggle;
         [SerializeField] private TMP_Dropdown resolutionDropdown;
 
         [SerializeField] private Button closeButton;
@@ -39,6 +40,7 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private TMP_Text lookSensitivityLabelText;
         [SerializeField] private TMP_Text languageLabelText;
         [SerializeField] private TMP_Text vsyncLabelText;
+        [SerializeField] private TMP_Text fullscreenLabelText;
         [SerializeField] private TMP_Text resolutionLabelText;
 
         [Header("Localization")]
@@ -49,6 +51,7 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private LocalizedString lookSensitivityLabel;
         [SerializeField] private LocalizedString languageLabel;
         [SerializeField] private LocalizedString vsyncLabel;
+        [SerializeField] private LocalizedString fullscreenLabel;
         [SerializeField] private LocalizedString resolutionLabel;
 
         private readonly List<Locale> availableLocales = new();
@@ -66,6 +69,7 @@ namespace FilloPrinci.RetroFpa
             ApplyLabel(lookSensitivityLabelText, lookSensitivityLabel);
             ApplyLabel(languageLabelText, languageLabel);
             ApplyLabel(vsyncLabelText, vsyncLabel);
+            ApplyLabel(fullscreenLabelText, fullscreenLabel);
             ApplyLabel(resolutionLabelText, resolutionLabel);
         }
 
@@ -87,6 +91,7 @@ namespace FilloPrinci.RetroFpa
             lookSensitivitySlider?.onValueChanged.AddListener(HandleLookSensitivityChanged);
             localeDropdown?.onValueChanged.AddListener(HandleLocaleChanged);
             vsyncToggle?.onValueChanged.AddListener(HandleVSyncChanged);
+            fullscreenToggle?.onValueChanged.AddListener(HandleFullscreenChanged);
             resolutionDropdown?.onValueChanged.AddListener(HandleResolutionChanged);
         }
 
@@ -98,6 +103,7 @@ namespace FilloPrinci.RetroFpa
             lookSensitivitySlider?.onValueChanged.RemoveListener(HandleLookSensitivityChanged);
             localeDropdown?.onValueChanged.RemoveListener(HandleLocaleChanged);
             vsyncToggle?.onValueChanged.RemoveListener(HandleVSyncChanged);
+            fullscreenToggle?.onValueChanged.RemoveListener(HandleFullscreenChanged);
             resolutionDropdown?.onValueChanged.RemoveListener(HandleResolutionChanged);
         }
 
@@ -112,6 +118,7 @@ namespace FilloPrinci.RetroFpa
             musicVolumeSlider?.SetValueWithoutNotify(SettingsManager.Instance.MusicVolume);
             sfxVolumeSlider?.SetValueWithoutNotify(SettingsManager.Instance.SfxVolume);
             vsyncToggle?.SetIsOnWithoutNotify(SettingsManager.Instance.VSyncEnabled);
+            fullscreenToggle?.SetIsOnWithoutNotify(SettingsManager.Instance.FullscreenEnabled);
 
             PopulateLocales();
             PopulateResolutions();
@@ -186,6 +193,8 @@ namespace FilloPrinci.RetroFpa
         }
 
         private void HandleVSyncChanged(bool value) => SettingsManager.Instance?.SetVSyncEnabled(value);
+
+        private void HandleFullscreenChanged(bool value) => SettingsManager.Instance?.SetFullscreenEnabled(value);
 
         private void HandleResolutionChanged(int index)
         {
