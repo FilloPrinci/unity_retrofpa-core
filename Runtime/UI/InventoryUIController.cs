@@ -31,9 +31,9 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private Button closeButton;
 
         [Header("3D Preview")]
-        [Tooltip("The player (or whichever GameObject should be passed as the 'wielder' to Equip/Unequip).")]
+        [Tooltip("The player's Transform (or whichever should be passed as the 'wielder' to Equip/Unequip).")]
         [SerializeField]
-        private GameObject wielder;
+        private Transform wielder;
         [SerializeField] private RawImage previewImage;
         [SerializeField] private Camera previewCamera;
         [SerializeField] private Transform previewAnchor;
@@ -260,13 +260,15 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
+            GameObject wielderGameObject = wielder != null ? wielder.gameObject : null;
+
             if (InventoryManager.Instance.EquippedItem == entry.Item)
             {
-                InventoryManager.Instance.Unequip(wielder);
+                InventoryManager.Instance.Unequip(wielderGameObject);
             }
             else
             {
-                InventoryManager.Instance.Equip(entry.Item, wielder);
+                InventoryManager.Instance.Equip(entry.Item, wielderGameObject);
             }
         }
 
