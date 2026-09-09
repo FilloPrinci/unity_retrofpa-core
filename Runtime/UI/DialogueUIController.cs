@@ -46,8 +46,9 @@ namespace FilloPrinci.RetroFpa
             continueButton?.onClick.AddListener(HandleContinueClicked);
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             DialogueManager.DialogueStarted -= HandleDialogueStarted;
             DialogueManager.NodeChanged -= HandleNodeChanged;
             DialogueManager.DialogueEnded -= HandleDialogueEnded;

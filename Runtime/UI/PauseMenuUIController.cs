@@ -61,8 +61,9 @@ namespace FilloPrinci.RetroFpa
             }
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             if (toggleAction != null)
             {
                 toggleAction.action.performed -= HandleTogglePerformed;

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `DialogueUIController`, `PauseMenuUIController`, `SettingsUIController`,
+  `InventoryUIController`: their `OnDisable()` was a plain method that
+  hid (rather than overrode) `UIScreen.OnDisable()`, so the base cleanup
+  (resetting `IsVisible`, decrementing the shared visible-screen count,
+  potentially leaving the cursor locked) never ran when one of these was
+  disabled. Now `protected override void OnDisable()` calling
+  `base.OnDisable()`.
+
 ### Changed
 
 - **Breaking:** `InventoryManager` now holds a fixed number of slots

@@ -95,8 +95,9 @@ namespace FilloPrinci.RetroFpa
             resolutionDropdown?.onValueChanged.AddListener(HandleResolutionChanged);
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             masterVolumeSlider?.onValueChanged.RemoveListener(HandleMasterVolumeChanged);
             musicVolumeSlider?.onValueChanged.RemoveListener(HandleMusicVolumeChanged);
             sfxVolumeSlider?.onValueChanged.RemoveListener(HandleSfxVolumeChanged);

@@ -80,8 +80,9 @@ namespace FilloPrinci.RetroFpa
             }
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             InventoryManager.SlotChanged -= HandleSlotChanged;
             InventoryManager.EquippedItemChanged -= HandleEquippedItemChanged;
 
