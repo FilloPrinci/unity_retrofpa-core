@@ -45,7 +45,11 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
-            InventoryManager.Instance.AddItem(item, quantity);
+            int added = InventoryManager.Instance.AddItem(item, quantity);
+            if (added < quantity)
+            {
+                Debug.LogWarning($"[CollectibleItem] Inventory full: only added {added}/{quantity} of '{item.name}'.", this);
+            }
         }
     }
 }

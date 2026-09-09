@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** `InventoryManager` now holds a fixed number of slots
+  (`Capacity`, `[SerializeField] capacity`, default 12) instead of an
+  unbounded growing list. `Entries` replaced by `Slots`
+  (`IReadOnlyList<InventoryEntry>`, same length as `Capacity`, null entries
+  are empty slots). `AddItem` now returns `int` (how many were actually
+  added — less than requested, possibly 0, when full) instead of `void`.
+  `ItemChanged` event replaced by `SlotChanged(int index, InventoryEntry)`,
+  fired per affected slot instead of per item. `CollectibleItem` updated to
+  log a warning when a pickup doesn't fully fit.
+- `InventorySlotUI`: reworked into a clickable, selectable grid cell
+  (icon + quantity badge only — no longer shows the item name inline).
+  Requires a `Button`; exposes `Clicked`, `Set`, `SetEmpty`, `SetSelected`.
+- `InventoryUIController`: rebuilt around a fixed grid (empty slots stay
+  visible), slot selection driving a name/description detail panel, an
+  Equip/Unequip toggle button, and a live 3D preview of the equipped
+  item's `WorldPrefab` — rendered by a dedicated `previewCamera` into a
+  `RenderTexture` created at runtime (assigned to a `RawImage`), using a
+  new `ItemPreview` layer (project-template `TagManager.asset`, index 8)
+  so only that camera sees the preview instance. Needs a `wielder`
+  reference (the player) wired in the Inspector to call Equip/Unequip.
+
 ### Added
 
 - `PersistentSingleton<T>`: base class for MonoBehaviour singletons that

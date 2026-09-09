@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FilloPrinci.RetroFpa
 {
-    /// <summary>One stack of a given item held in the inventory.</summary>
+    /// <summary>One stack of a given item held in one inventory slot.</summary>
     [Serializable]
     public class InventoryEntry
     {
@@ -19,42 +19,87 @@ namespace FilloPrinci.RetroFpa
     }
 
     /// <summary>
-    /// Holds the items the player has collected and which equippable item
-    /// (if any) is currently equipped. Decoupled from how items enter the
-    /// inventory (see <see cref="CollectibleItem"/>) and from who "the
-    /// wielder" is (passed in by the caller, e.g. a future player controller).
+    /// Holds the items the player has collected, in a fixed number of slots
+    /// (<see cref="Capacity"/>) — a slot is either empty (null in
+    /// <see cref="Slots"/>) or holds one stack. Also tracks which equippable
+    /// item (if any) is currently equipped. Decoupled from how items enter
+    /// the inventory (see <see cref="CollectibleItem"/>) and from who "the
+    /// wielder" is (passed in by the caller).
     /// </summary>
     public class InventoryManager : PersistentSingleton<InventoryManager>
     {
-        private readonly List<InventoryEntry> entries = new();
+        [Tooltip("Number of inventory slots. Fixed for the lifetime of the session — set once here.")]
+        [SerializeField]
+        private int capacity = 12;
 
-        /// <summary>Raised after an item stack changes (item, new total quantity).</summary>
-        public static event Action<ItemData, int> ItemChanged;
+        private InventoryEntry[] slots;
+
+        /// <summary>Raised after slot <c>index</c> changes; <c>entry</c> is null when the slot became/stayed empty.</summary>
+        public static event Action<int, InventoryEntry> SlotChanged;
 
         /// <summary>Raised when the equipped item changes (previous, current). Either can be null.</summary>
         public static event Action<ItemData, ItemData> EquippedItemChanged;
 
-        public IReadOnlyList<InventoryEntry> Entries => entries;
+        public int Capacity => slots?.Length ?? 0;
+
+        public IReadOnlyList<InventoryEntry> Slots => slots;
 
         public ItemData EquippedItem { get; private set; }
 
-        /// <summary>Adds <paramref name="quantity"/> of <paramref name="item"/>, stacking up to its MaxStackSize.</summary>
-        public void AddItem(ItemData item, int quantity = 1)
+        protected override void Awake()
         {
-            if (item == null || quantity <= 0)
+            base.Awake();
+            if (Instance != this)
             {
                 return;
             }
 
-            InventoryEntry entry = FindEntryWithRoom(item);
-            if (entry == null)
+            slots = new InventoryEntry[Mathf.Max(0, capacity)];
+        }
+
+        /// <summary>
+        /// Adds up to <paramref name="quantity"/> of <paramref name="item"/>,
+        /// stacking into existing matching slots first, then into empty
+        /// slots. Returns how many were actually added — less than
+        /// <paramref name="quantity"/> (possibly 0) if the inventory is full.
+        /// </summary>
+        public int AddItem(ItemData item, int quantity = 1)
+        {
+            if (item == null || quantity <= 0)
             {
-                entry = new InventoryEntry(item, 0);
-                entries.Add(entry);
+                return 0;
             }
 
-            entry.Quantity = Mathf.Min(entry.Quantity + quantity, item.MaxStackSize);
-            ItemChanged?.Invoke(item, GetQuantity(item));
+            int remaining = quantity;
+
+            for (int i = 0; i < slots.Length && remaining > 0; i++)
+            {
+                InventoryEntry entry = slots[i];
+                if (entry == null || entry.Item != item || entry.Quantity >= item.MaxStackSize)
+                {
+                    continue;
+                }
+
+                int added = Mathf.Min(item.MaxStackSize - entry.Quantity, remaining);
+                entry.Quantity += added;
+                remaining -= added;
+                SlotChanged?.Invoke(i, entry);
+            }
+
+            for (int i = 0; i < slots.Length && remaining > 0; i++)
+            {
+                if (slots[i] != null)
+                {
+                    continue;
+                }
+
+                int added = Mathf.Min(item.MaxStackSize, remaining);
+                slots[i] = new InventoryEntry(item, added);
+                remaining -= added;
+                SlotChanged?.Invoke(i, slots[i]);
+            }
+
+            return quantity - remaining;
         }
 
         /// <summary>Removes up to <paramref name="quantity"/> of <paramref name="item"/>. Returns how many were actually removed.</summary>
@@ -66,10 +111,10 @@ namespace FilloPrinci.RetroFpa
             }
 
             int remaining = quantity;
-            for (int i = entries.Count - 1; i >= 0 && remaining > 0; i--)
+            for (int i = slots.Length - 1; i >= 0 && remaining > 0; i--)
             {
-                InventoryEntry entry = entries[i];
-                if (entry.Item != item)
+                InventoryEntry entry = slots[i];
+                if (entry == null || entry.Item != item)
                 {
                     continue;
                 }
@@ -80,19 +125,16 @@ namespace FilloPrinci.RetroFpa
 
                 if (entry.Quantity <= 0)
                 {
-                    entries.RemoveAt(i);
+                    slots[i] = null;
                 }
+
+                SlotChanged?.Invoke(i, slots[i]);
             }
 
             int removed = quantity - remaining;
-            if (removed > 0)
+            if (removed > 0 && item == EquippedItem && GetQuantity(item) <= 0)
             {
-                if (item == EquippedItem && GetQuantity(item) <= 0)
-                {
-                    Unequip(null);
-                }
-
-                ItemChanged?.Invoke(item, GetQuantity(item));
+                Unequip(null);
             }
 
             return removed;
@@ -101,9 +143,9 @@ namespace FilloPrinci.RetroFpa
         public int GetQuantity(ItemData item)
         {
             int total = 0;
-            foreach (InventoryEntry entry in entries)
+            foreach (InventoryEntry entry in slots)
             {
-                if (entry.Item == item)
+                if (entry != null && entry.Item == item)
                 {
                     total += entry.Quantity;
                 }
@@ -148,19 +190,6 @@ namespace FilloPrinci.RetroFpa
             previous.EquippableBehavior.OnUnequip(wielder);
             EquippedItem = null;
             EquippedItemChanged?.Invoke(previous, null);
-        }
-
-        private InventoryEntry FindEntryWithRoom(ItemData item)
-        {
-            foreach (InventoryEntry entry in entries)
-            {
-                if (entry.Item == item && entry.Quantity < item.MaxStackSize)
-                {
-                    return entry;
-                }
-            }
-
-            return null;
         }
     }
 }
