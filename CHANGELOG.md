@@ -34,11 +34,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `InventoryUIController`: rebuilt around a fixed grid (empty slots stay
   visible), slot selection driving a name/description detail panel, an
   Equip/Unequip toggle button, and a live 3D preview of the equipped
-  item's `WorldPrefab` — rendered by a dedicated `previewCamera` into a
-  `RenderTexture` created at runtime (assigned to a `RawImage`), using a
-  new `ItemPreview` layer (project-template `TagManager.asset`, index 8)
-  so only that camera sees the preview instance. Needs a `wielder`
-  reference (the player) wired in the Inspector to call Equip/Unequip.
+  item's `EquippedModelPrefab` — rendered by a dedicated `previewCamera`
+  into a `RenderTexture` created at runtime (assigned to a `RawImage`),
+  using a new `ItemPreview` layer (project-template `TagManager.asset`,
+  index 8) so only that camera sees the preview instance. Needs a
+  `wielder` reference (the player) wired in the Inspector to call
+  Equip/Unequip.
+- `ItemData`: new `equippedModelPrefab` field — the model shown equipped
+  in the inventory's 3D preview (like a weapon's view model in an eFPS),
+  kept separate from `icon` (2D) and `worldPrefab` (world drop prefab).
+  `ItemValidator` now also warns when an equippable item has none.
 
 ### Added
 

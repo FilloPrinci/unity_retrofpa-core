@@ -12,7 +12,7 @@ namespace FilloPrinci.RetroFpa
     /// reflecting <see cref="InventoryManager"/>. Clicking a slot selects it,
     /// showing its item's name/description and, for equippable items, an
     /// Equip/Unequip button. The currently equipped item's
-    /// <see cref="ItemData.WorldPrefab"/> is rendered live via
+    /// <see cref="ItemData.EquippedModelPrefab"/> is rendered live via
     /// <see cref="previewCamera"/> into <see cref="previewImage"/> (a
     /// RenderTexture created at runtime — see <see cref="SetUpPreview"/>).
     /// </summary>
@@ -287,11 +287,11 @@ namespace FilloPrinci.RetroFpa
             }
 
             ItemData equipped = InventoryManager.Instance != null ? InventoryManager.Instance.EquippedItem : null;
-            bool hasPreview = equipped != null && equipped.WorldPrefab != null && previewAnchor != null;
+            bool hasPreview = equipped != null && equipped.EquippedModelPrefab != null && previewAnchor != null;
 
             if (hasPreview)
             {
-                previewInstance = Instantiate(equipped.WorldPrefab, previewAnchor);
+                previewInstance = Instantiate(equipped.EquippedModelPrefab, previewAnchor);
                 previewInstance.transform.localPosition = Vector3.zero;
                 previewInstance.transform.localRotation = Quaternion.identity;
                 SetLayerRecursively(previewInstance, previewAnchor.gameObject.layer);

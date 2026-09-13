@@ -23,6 +23,10 @@ namespace FilloPrinci.RetroFpa
         [SerializeField]
         private GameObject worldPrefab;
 
+        [Tooltip("The model shown equipped in the inventory's 3D preview (bottom-right), like a weapon's view model in an eFPS. Separate from the icon and from worldPrefab — leave empty to show no preview when equipped.")]
+        [SerializeField]
+        private GameObject equippedModelPrefab;
+
         [SerializeField, Min(1)] private int maxStackSize = 1;
 
         [Tooltip("Leave empty for a non-equippable item (key, note, quest item).")]
@@ -34,6 +38,7 @@ namespace FilloPrinci.RetroFpa
         public LocalizedString Description => description;
         public Sprite Icon => icon;
         public GameObject WorldPrefab => worldPrefab;
+        public GameObject EquippedModelPrefab => equippedModelPrefab;
         public int MaxStackSize => maxStackSize;
         public EquippableBehavior EquippableBehavior => equippableBehavior;
         public bool IsEquippable => equippableBehavior != null;

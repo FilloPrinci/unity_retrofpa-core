@@ -54,6 +54,11 @@ namespace FilloPrinci.RetroFpa.Editor
             {
                 Report(messages, item, $"{path}: World Prefab is not assigned (can't be dropped/spawned in-world).");
             }
+
+            if (item.IsEquippable && item.EquippedModelPrefab == null)
+            {
+                Report(messages, item, $"{path}: item is equippable but Equipped Model Prefab is not assigned (no 3D preview when equipped).");
+            }
         }
 
         private static void Report(List<string> messages, Object context, string message)
