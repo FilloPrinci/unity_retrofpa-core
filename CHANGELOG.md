@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   potentially leaving the cursor locked) never ran when one of these was
   disabled. Now `protected override void OnDisable()` calling
   `base.OnDisable()`.
+- `PlayerInteractor`: the interact raycast used `TryGetComponent<Interactable>`
+  on the hit collider itself, so it missed an `Interactable` placed on a
+  parent object (e.g. an NPC whose collider lives on a child visual mesh,
+  matching how world item pickups are composed). Now uses
+  `GetComponentInParent<Interactable>()`.
 
 ### Changed
 

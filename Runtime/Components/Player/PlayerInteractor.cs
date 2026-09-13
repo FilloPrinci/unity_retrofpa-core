@@ -88,10 +88,12 @@ namespace FilloPrinci.RetroFpa
         private Interactable Raycast()
         {
             Transform origin = rayOrigin != null ? rayOrigin : transform;
-            if (Physics.Raycast(origin.position, origin.forward, out RaycastHit hit, interactRange, interactMask)
-                && hit.collider.TryGetComponent(out Interactable interactable))
+            if (Physics.Raycast(origin.position, origin.forward, out RaycastHit hit, interactRange, interactMask))
             {
-                return interactable;
+                // GetComponentInParent (not TryGetComponent on the hit collider
+                // itself) so an Interactable on a root object still works when
+                // its collider lives on a child (e.g. an NPC's visual mesh).
+                return hit.collider.GetComponentInParent<Interactable>();
             }
 
             return null;
