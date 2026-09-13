@@ -42,6 +42,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `HeldItemEquippableBehavior`: an `EquippableBehavior` with no fields and no
+  primary action, for equippable items that aren't weapons (keys, tools,
+  quest items) — equipping just makes them "held"/previewed, nothing more.
+  One shared instance can be reused by every such item.
 - `PersistentSingleton<T>`: base class for MonoBehaviour singletons that
   survive additive scene loads (Unity equivalent of a Godot autoload).
 - `GameManager`: tracks `GameState` (Boot/Loading/Playing/Paused), reacts to
