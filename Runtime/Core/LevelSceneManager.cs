@@ -78,8 +78,11 @@ namespace FilloPrinci.RetroFpa
             Scene loadedScene = UnitySceneManager.GetSceneByName(sceneName);
             currentLevelScene = loadedScene;
 
-            // Make the level's own lighting/skybox/fog settings the active
-            // ones, so a VisualStyleProfile applied by that level takes effect.
+            // Makes the level scene's own lighting/skybox/fog RenderSettings
+            // the active ones, resetting whatever the previous scene had
+            // set (including any style StyleManager applied). StyleManager
+            // listens for LevelLoaded below and reapplies its current
+            // VisualStyleProfile on top of this.
             UnitySceneManager.SetActiveScene(loadedScene);
 
             PlacePlayerAtSpawnPoint(loadedScene, spawnPointId);

@@ -34,9 +34,30 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
+            LevelSceneManager.LevelLoaded += OnLevelLoaded;
+
             if (initialProfile != null)
             {
                 ApplyProfile(initialProfile);
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            LevelSceneManager.LevelLoaded -= OnLevelLoaded;
+        }
+
+        // LevelSceneManager makes each newly loaded level scene the active
+        // scene, and RenderSettings (fog/ambient) are per-scene data, so
+        // that silently resets them to the level scene's own (usually
+        // empty) values. Reapplying here restores the current style on top
+        // of whatever the level scene just loaded.
+        private void OnLevelLoaded(string sceneName)
+        {
+            if (CurrentProfile != null)
+            {
+                ApplyProfile(CurrentProfile);
             }
         }
 

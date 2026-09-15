@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `StyleManager`: `LevelSceneManager` makes each newly loaded level scene
+  the active scene, and Unity's fog/ambient `RenderSettings` are per-scene
+  data, so that silently reset whatever style `StyleManager` had applied
+  back to the level scene's own (empty) values — a style set at startup
+  effectively disappeared the moment a level loaded. `StyleManager` now
+  subscribes to `LevelSceneManager.LevelLoaded` and reapplies
+  `CurrentProfile` after every level load. Also fixes its `OnDestroy()`
+  hiding (rather than overriding) `PersistentSingleton<T>.OnDestroy()`,
+  same class of bug as the `UIScreen` fix above.
 - `DialogueUIController`, `PauseMenuUIController`, `SettingsUIController`,
   `InventoryUIController`: their `OnDisable()` was a plain method that
   hid (rather than overrode) `UIScreen.OnDisable()`, so the base cleanup
