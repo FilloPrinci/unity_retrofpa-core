@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Skybox Horizon/Zenith Color together at the top under one "Fog & Sky"
   section (instead of separate "Fog"/"Skybox" headers), with a
   "Sync Skybox Horizon ← Fog Color" button.
+- `VisualStyleProfile.textureFilterMode`/`applyToUITextures`: Point
+  (PS1-style crisp) vs. Bilinear/Trilinear (N64-style smoothed) texture
+  filtering as part of a style. `Texture.filterMode` is a per-Texture2D
+  runtime property, not something a Material/Volume can override, so
+  `StyleManager` applies it by walking the actual textures referenced by
+  `Renderer`s in the currently loaded scenes (default), or every loaded
+  `Texture2D` including UI when `applyToUITextures` is set.
 
 ### Fixed
 

@@ -6,10 +6,11 @@ namespace FilloPrinci.RetroFpa
 {
     /// <summary>
     /// Applies a <see cref="VisualStyleProfile"/> to the persistent global
-    /// URP <see cref="Volume"/>, to RenderSettings (fog/ambient), and to a
-    /// runtime skybox Material instance. Changing the game's visual style
-    /// is just assigning a different profile to this singleton via
-    /// <see cref="ApplyProfile"/>.
+    /// URP <see cref="Volume"/>, to RenderSettings (fog/ambient), to a
+    /// runtime skybox Material instance, and to the filterMode of textures
+    /// in use (PS1-style Point vs. N64-style Bilinear/Trilinear). Changing
+    /// the game's visual style is just assigning a different profile to
+    /// this singleton via <see cref="ApplyProfile"/>.
     /// </summary>
     public class StyleManager : PersistentSingleton<StyleManager>
     {
@@ -88,6 +89,7 @@ namespace FilloPrinci.RetroFpa
             CurrentProfile = profile;
             profile.ApplyFogAndAmbient();
             ApplySkybox(profile);
+            ApplyTextureFiltering(profile);
 
             if (targetVolume != null)
             {
@@ -119,6 +121,45 @@ namespace FilloPrinci.RetroFpa
 
             RenderSettings.skybox = runtimeSkyboxMaterial;
             profile.ApplySkybox(runtimeSkyboxMaterial);
+        }
+
+        // Texture filtering is a per-Texture2D runtime property (Texture.filterMode),
+        // not something a Material or Volume can override, so applying a style means
+        // walking the actual textures in use and setting it directly on each.
+        private static void ApplyTextureFiltering(VisualStyleProfile profile)
+        {
+            if (profile.ApplyToUITextures)
+            {
+                // Broadest reach: every Texture2D currently in memory, UI included.
+                foreach (Texture2D texture in Resources.FindObjectsOfTypeAll<Texture2D>())
+                {
+                    texture.filterMode = profile.TextureFilterMode;
+                }
+
+                return;
+            }
+
+            // Scoped to world geometry: only textures referenced by Renderers in the
+            // currently loaded scenes (persistent + whatever level is active), so UI
+            // icons/fonts keep whatever filtering they were imported with.
+            foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                foreach (Material material in renderer.sharedMaterials)
+                {
+                    if (material == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (int propertyId in material.GetTexturePropertyNameIDs())
+                    {
+                        if (material.GetTexture(propertyId) is Texture2D texture)
+                        {
+                            texture.filterMode = profile.TextureFilterMode;
+                        }
+                    }
+                }
+            }
         }
     }
 }

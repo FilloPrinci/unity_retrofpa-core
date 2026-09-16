@@ -44,6 +44,15 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private bool tonemappingEnabled = true;
         [SerializeField] private TonemappingMode tonemappingMode = TonemappingMode.Neutral;
 
+        [Header("Texture Filtering")]
+        [Tooltip("Point = crisp/pixelated (PS1-style). Bilinear/Trilinear = smoothed (N64-style).")]
+        [SerializeField] private FilterMode textureFilterMode = FilterMode.Point;
+        [Tooltip("If true, StyleManager also applies textureFilterMode to UI textures " +
+                 "(icons, TMP font atlases). If false (default), only textures used by " +
+                 "Renderers in the currently loaded scenes are affected - the UI keeps " +
+                 "whichever filtering it was imported with.")]
+        [SerializeField] private bool applyToUITextures;
+
         [Header("Skybox (2-color gradient, e.g. Retro FPA/Gradient Skybox)")]
         [SerializeField] private bool skyboxEnabled = true;
         [Tooltip("Color at/below the horizon. Set close to fogColor so geometry fades into the sky at the horizon instead of cutting against a mismatched skybox.")]
@@ -67,6 +76,12 @@ namespace FilloPrinci.RetroFpa
         /// level can keep a bespoke skybox instead.
         /// </summary>
         public bool SkyboxEnabled => skyboxEnabled;
+
+        /// <summary>Point (PS1-style) or Bilinear/Trilinear (N64-style) texture filtering.</summary>
+        public FilterMode TextureFilterMode => textureFilterMode;
+
+        /// <summary>Whether <see cref="TextureFilterMode"/> should also apply to UI textures.</summary>
+        public bool ApplyToUITextures => applyToUITextures;
 
         /// <summary>Writes fog and ambient light settings into the active scene's global RenderSettings.</summary>
         public void ApplyFogAndAmbient()
