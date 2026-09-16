@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `Retro FPA/Flat Skybox` shader: minimal single-color skybox (no
+  atmospheric scattering). `Skybox/Procedural` (URP's bundled
+  physically-based sky) can't produce a flat retro look — lowering its
+  Atmosphere Thickness darkens the zenith toward black instead of
+  flattening the gradient, since it's modeling real Rayleigh scattering,
+  not a stylistic tint. `VisualStyleProfile` gained `skyboxEnabled`/
+  `skyboxColor`/`skyboxExposure` plus `ApplySkybox(Material)`;
+  `StyleManager` gained a `skyboxMaterialTemplate` field, instantiates
+  its own copy on first use (never animates the shared template asset),
+  and applies it alongside fog/ambient/Volume overrides. Set
+  `skyboxColor` close to `fogColor` so the horizon fades seamlessly
+  instead of cutting against a mismatched sky.
+
 ### Fixed
 
 - `StyleManager`: `LevelSceneManager` makes each newly loaded level scene

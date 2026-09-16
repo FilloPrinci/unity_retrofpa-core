@@ -44,6 +44,23 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private bool tonemappingEnabled = true;
         [SerializeField] private TonemappingMode tonemappingMode = TonemappingMode.Neutral;
 
+        [Header("Skybox (flat color, e.g. Retro FPA/Flat Skybox)")]
+        [SerializeField] private bool skyboxEnabled = true;
+        [Tooltip("Flat sky color. Set close to fogColor so geometry fades into the sky at the horizon instead of cutting against a mismatched skybox.")]
+        [SerializeField] private Color skyboxColor = Color.gray;
+        [SerializeField] private float skyboxExposure = 1f;
+
+        private static readonly int TintId = Shader.PropertyToID("_Tint");
+        private static readonly int ExposureId = Shader.PropertyToID("_Exposure");
+
+        /// <summary>
+        /// Whether this profile wants to drive the skybox at all. When
+        /// false, <see cref="StyleManager"/> leaves whatever skybox
+        /// (RenderSettings.skybox) was already active untouched, so a
+        /// level can keep a bespoke skybox instead.
+        /// </summary>
+        public bool SkyboxEnabled => skyboxEnabled;
+
         /// <summary>Writes fog and ambient light settings into the active scene's global RenderSettings.</summary>
         public void ApplyFogAndAmbient()
         {
@@ -119,6 +136,23 @@ namespace FilloPrinci.RetroFpa
         {
             parameter.overrideState = true;
             parameter.value = value;
+        }
+
+        /// <summary>
+        /// Writes this profile's flat sky color/exposure onto
+        /// <paramref name="skyboxMaterial"/> (a flat-skybox instance owned
+        /// by <see cref="StyleManager"/>). No-op if
+        /// <see cref="skyboxEnabled"/> is false or the material is null.
+        /// </summary>
+        public void ApplySkybox(Material skyboxMaterial)
+        {
+            if (!skyboxEnabled || skyboxMaterial == null)
+            {
+                return;
+            }
+
+            skyboxMaterial.SetColor(TintId, skyboxColor);
+            skyboxMaterial.SetFloat(ExposureId, skyboxExposure);
         }
     }
 }

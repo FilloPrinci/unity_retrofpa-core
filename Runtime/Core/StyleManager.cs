@@ -6,9 +6,10 @@ namespace FilloPrinci.RetroFpa
 {
     /// <summary>
     /// Applies a <see cref="VisualStyleProfile"/> to the persistent global
-    /// URP <see cref="Volume"/> and to RenderSettings (fog/ambient).
-    /// Changing the game's visual style is just assigning a different
-    /// profile to this singleton via <see cref="ApplyProfile"/>.
+    /// URP <see cref="Volume"/>, to RenderSettings (fog/ambient), and to a
+    /// runtime skybox Material instance. Changing the game's visual style
+    /// is just assigning a different profile to this singleton via
+    /// <see cref="ApplyProfile"/>.
     /// </summary>
     public class StyleManager : PersistentSingleton<StyleManager>
     {
@@ -20,10 +21,19 @@ namespace FilloPrinci.RetroFpa
         [SerializeField]
         private VisualStyleProfile initialProfile;
 
+        [Tooltip("Template skybox Material (e.g. built on the 'Retro FPA/Flat Skybox' shader). " +
+                 "StyleManager instantiates its own copy on first use, so each " +
+                 "VisualStyleProfile's color/exposure update that copy instead of the " +
+                 "shared template asset.")]
+        [SerializeField]
+        private Material skyboxMaterialTemplate;
+
         /// <summary>Raised whenever a new style is applied.</summary>
         public static event Action<VisualStyleProfile> StyleChanged;
 
         public VisualStyleProfile CurrentProfile { get; private set; }
+
+        private Material runtimeSkyboxMaterial;
 
         protected override void Awake()
         {
@@ -46,6 +56,11 @@ namespace FilloPrinci.RetroFpa
         {
             base.OnDestroy();
             LevelSceneManager.LevelLoaded -= OnLevelLoaded;
+
+            if (runtimeSkyboxMaterial != null)
+            {
+                Destroy(runtimeSkyboxMaterial);
+            }
         }
 
         // LevelSceneManager makes each newly loaded level scene the active
@@ -72,6 +87,7 @@ namespace FilloPrinci.RetroFpa
 
             CurrentProfile = profile;
             profile.ApplyFogAndAmbient();
+            ApplySkybox(profile);
 
             if (targetVolume != null)
             {
@@ -83,6 +99,26 @@ namespace FilloPrinci.RetroFpa
             }
 
             StyleChanged?.Invoke(profile);
+        }
+
+        private void ApplySkybox(VisualStyleProfile profile)
+        {
+            if (!profile.SkyboxEnabled || skyboxMaterialTemplate == null)
+            {
+                return;
+            }
+
+            if (runtimeSkyboxMaterial == null)
+            {
+                // Instantiate once, so repeated style changes update this
+                // one copy's properties instead of touching the shared
+                // template asset (same rule as never animating a shared
+                // Material directly).
+                runtimeSkyboxMaterial = new Material(skyboxMaterialTemplate);
+            }
+
+            RenderSettings.skybox = runtimeSkyboxMaterial;
+            profile.ApplySkybox(runtimeSkyboxMaterial);
         }
     }
 }
