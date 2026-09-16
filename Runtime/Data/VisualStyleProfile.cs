@@ -44,13 +44,20 @@ namespace FilloPrinci.RetroFpa
         [SerializeField] private bool tonemappingEnabled = true;
         [SerializeField] private TonemappingMode tonemappingMode = TonemappingMode.Neutral;
 
-        [Header("Skybox (flat color, e.g. Retro FPA/Flat Skybox)")]
+        [Header("Skybox (2-color gradient, e.g. Retro FPA/Gradient Skybox)")]
         [SerializeField] private bool skyboxEnabled = true;
-        [Tooltip("Flat sky color. Set close to fogColor so geometry fades into the sky at the horizon instead of cutting against a mismatched skybox.")]
-        [SerializeField] private Color skyboxColor = Color.gray;
+        [Tooltip("Color at/below the horizon. Set close to fogColor so geometry fades into the sky at the horizon instead of cutting against a mismatched skybox.")]
+        [SerializeField] private Color skyboxHorizonColor = Color.gray;
+        [Tooltip("Color straight up at the zenith.")]
+        [SerializeField] private Color skyboxZenithColor = Color.gray;
+        [Tooltip("How quickly the gradient shifts from horizon to zenith color as you look up. " +
+                 "1 = linear by height; higher keeps the horizon color longer; lower reaches the zenith color sooner.")]
+        [SerializeField] private float skyboxCurve = 1f;
         [SerializeField] private float skyboxExposure = 1f;
 
-        private static readonly int TintId = Shader.PropertyToID("_Tint");
+        private static readonly int HorizonColorId = Shader.PropertyToID("_HorizonColor");
+        private static readonly int ZenithColorId = Shader.PropertyToID("_ZenithColor");
+        private static readonly int CurveId = Shader.PropertyToID("_Curve");
         private static readonly int ExposureId = Shader.PropertyToID("_Exposure");
 
         /// <summary>
@@ -139,9 +146,9 @@ namespace FilloPrinci.RetroFpa
         }
 
         /// <summary>
-        /// Writes this profile's flat sky color/exposure onto
-        /// <paramref name="skyboxMaterial"/> (a flat-skybox instance owned
-        /// by <see cref="StyleManager"/>). No-op if
+        /// Writes this profile's horizon/zenith colors onto
+        /// <paramref name="skyboxMaterial"/> (a gradient-skybox instance
+        /// owned by <see cref="StyleManager"/>). No-op if
         /// <see cref="skyboxEnabled"/> is false or the material is null.
         /// </summary>
         public void ApplySkybox(Material skyboxMaterial)
@@ -151,7 +158,9 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
-            skyboxMaterial.SetColor(TintId, skyboxColor);
+            skyboxMaterial.SetColor(HorizonColorId, skyboxHorizonColor);
+            skyboxMaterial.SetColor(ZenithColorId, skyboxZenithColor);
+            skyboxMaterial.SetFloat(CurveId, skyboxCurve);
             skyboxMaterial.SetFloat(ExposureId, skyboxExposure);
         }
     }

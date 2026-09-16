@@ -21,9 +21,9 @@ namespace FilloPrinci.RetroFpa
         [SerializeField]
         private VisualStyleProfile initialProfile;
 
-        [Tooltip("Template skybox Material (e.g. built on the 'Retro FPA/Flat Skybox' shader). " +
+        [Tooltip("Template skybox Material (e.g. built on the 'Retro FPA/Gradient Skybox' shader). " +
                  "StyleManager instantiates its own copy on first use, so each " +
-                 "VisualStyleProfile's color/exposure update that copy instead of the " +
+                 "VisualStyleProfile's colors/exposure update that copy instead of the " +
                  "shared template asset.")]
         [SerializeField]
         private Material skyboxMaterialTemplate;

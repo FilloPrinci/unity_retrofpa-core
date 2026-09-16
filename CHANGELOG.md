@@ -9,18 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `Retro FPA/Flat Skybox` shader: minimal single-color skybox (no
-  atmospheric scattering). `Skybox/Procedural` (URP's bundled
-  physically-based sky) can't produce a flat retro look — lowering its
-  Atmosphere Thickness darkens the zenith toward black instead of
-  flattening the gradient, since it's modeling real Rayleigh scattering,
-  not a stylistic tint. `VisualStyleProfile` gained `skyboxEnabled`/
-  `skyboxColor`/`skyboxExposure` plus `ApplySkybox(Material)`;
-  `StyleManager` gained a `skyboxMaterialTemplate` field, instantiates
-  its own copy on first use (never animates the shared template asset),
-  and applies it alongside fog/ambient/Volume overrides. Set
-  `skyboxColor` close to `fogColor` so the horizon fades seamlessly
-  instead of cutting against a mismatched sky.
+- `Retro FPA/Gradient Skybox` shader: minimal 2-color vertical gradient
+  skybox (horizon → zenith, no atmospheric scattering). `Skybox/Procedural`
+  (URP's bundled physically-based sky) can't produce a flat retro look —
+  lowering its Atmosphere Thickness darkens the zenith toward black
+  instead of flattening the gradient, since it's modeling real Rayleigh
+  scattering, not a stylistic tint. `VisualStyleProfile` gained
+  `skyboxEnabled`/`skyboxHorizonColor`/`skyboxZenithColor`/`skyboxCurve`/
+  `skyboxExposure` plus `ApplySkybox(Material)`; `StyleManager` gained a
+  `skyboxMaterialTemplate` field, instantiates its own copy on first use
+  (never animates the shared template asset), and applies it alongside
+  fog/ambient/Volume overrides. Set `skyboxHorizonColor` close to
+  `fogColor` so the horizon fades seamlessly instead of cutting against a
+  mismatched sky.
+- `VisualStyleProfileEditor` (custom Inspector): groups Fog Color and
+  Skybox Horizon/Zenith Color together at the top under one "Fog & Sky"
+  section (instead of separate "Fog"/"Skybox" headers), with a
+  "Sync Skybox Horizon ← Fog Color" button.
 
 ### Fixed
 
