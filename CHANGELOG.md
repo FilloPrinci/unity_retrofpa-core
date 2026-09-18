@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `RetroTwoLayer` Shader Graph: both texture layers were wired through a
+  single explicit "Sampler State" node hardcoded to Point filtering, which
+  overrides a texture's own sampler entirely and completely ignores
+  `Texture.filterMode` — so `StyleManager`'s texture-filtering style (see
+  below) had no visible effect on any material using this shader. Removed
+  the Sampler State node; both layers now fall back to their Sample
+  Texture 2D node's "Default" sampler, which does respect each texture's
+  own (runtime-overridable) filter mode.
+
 ### Added
 
 - `Retro FPA/Gradient Skybox` shader: minimal 2-color vertical gradient
