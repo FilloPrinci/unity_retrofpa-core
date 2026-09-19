@@ -5,12 +5,16 @@ using UnityEngine.Rendering;
 namespace FilloPrinci.RetroFpa
 {
     /// <summary>
-    /// Applies a <see cref="VisualStyleProfile"/> to the persistent global
-    /// URP <see cref="Volume"/>, to RenderSettings (fog/ambient), to a
-    /// runtime skybox Material instance, and to the filterMode of textures
-    /// in use (PS1-style Point vs. N64-style Bilinear/Trilinear). Changing
-    /// the game's visual style is just assigning a different profile to
-    /// this singleton via <see cref="ApplyProfile"/>.
+    /// Applies a <see cref="VisualStyleProfile"/> (the game's global look:
+    /// ambient light, the persistent URP <see cref="Volume"/>'s color
+    /// grading/bloom/tonemapping, and texture filterMode) and, separately,
+    /// each level's own <see cref="SceneAtmosphereProfile"/> (fog and
+    /// skybox, via a <see cref="SceneAtmosphere"/> component in that level's
+    /// scene) to a runtime skybox Material instance. Changing the game's
+    /// overall visual style is just assigning a different profile to this
+    /// singleton via <see cref="ApplyProfile"/>; changing one level's
+    /// atmosphere is just assigning a different profile to its own
+    /// <see cref="SceneAtmosphere"/> component.
     /// </summary>
     public class StyleManager : PersistentSingleton<StyleManager>
     {
@@ -23,8 +27,8 @@ namespace FilloPrinci.RetroFpa
         private VisualStyleProfile initialProfile;
 
         [Tooltip("Template skybox Material (e.g. built on the 'Retro FPA/Gradient Skybox' shader). " +
-                 "StyleManager instantiates its own copy on first use, so each " +
-                 "VisualStyleProfile's colors/exposure update that copy instead of the " +
+                 "StyleManager instantiates its own copy on first use, so each level's " +
+                 "SceneAtmosphereProfile colors/exposure update that copy instead of the " +
                  "shared template asset.")]
         [SerializeField]
         private Material skyboxMaterialTemplate;
@@ -65,10 +69,12 @@ namespace FilloPrinci.RetroFpa
         }
 
         // LevelSceneManager makes each newly loaded level scene the active
-        // scene, and RenderSettings (fog/ambient) are per-scene data, so
-        // that silently resets them to the level scene's own (usually
-        // empty) values. Reapplying here restores the current style on top
-        // of whatever the level scene just loaded.
+        // scene, and RenderSettings (ambient light included) are per-scene
+        // data, so that silently resets it to the level scene's own
+        // (usually empty) values. Reapplying here restores the current
+        // style's ambient light on top of whatever the level scene just
+        // loaded. Fog/skybox are NOT reapplied here - those are each
+        // level's own business, via that level's SceneAtmosphere component.
         private void OnLevelLoaded(string sceneName)
         {
             if (CurrentProfile != null)
@@ -77,7 +83,7 @@ namespace FilloPrinci.RetroFpa
             }
         }
 
-        /// <summary>Applies <paramref name="profile"/> as the current visual style.</summary>
+        /// <summary>Applies <paramref name="profile"/> as the current global visual style.</summary>
         public void ApplyProfile(VisualStyleProfile profile)
         {
             if (profile == null)
@@ -87,8 +93,7 @@ namespace FilloPrinci.RetroFpa
             }
 
             CurrentProfile = profile;
-            profile.ApplyFogAndAmbient();
-            ApplySkybox(profile);
+            profile.ApplyAmbient();
             ApplyTextureFiltering(profile);
 
             if (targetVolume != null)
@@ -103,24 +108,39 @@ namespace FilloPrinci.RetroFpa
             StyleChanged?.Invoke(profile);
         }
 
-        private void ApplySkybox(VisualStyleProfile profile)
+        /// <summary>
+        /// Applies <paramref name="atmosphere"/> (one level's fog/skybox) to
+        /// the active scene. Called by that level's own
+        /// <see cref="SceneAtmosphere"/> component - not tracked/reapplied
+        /// here on later level loads, since each level scene re-triggers
+        /// this itself via its own <see cref="SceneAtmosphere"/> when it loads.
+        /// </summary>
+        public void ApplySceneAtmosphere(SceneAtmosphereProfile atmosphere)
         {
-            if (!profile.SkyboxEnabled || skyboxMaterialTemplate == null)
+            if (atmosphere == null)
+            {
+                Debug.LogWarning("[StyleManager] Tried to apply a null SceneAtmosphereProfile.", this);
+                return;
+            }
+
+            atmosphere.ApplyFog();
+
+            if (!atmosphere.SkyboxEnabled || skyboxMaterialTemplate == null)
             {
                 return;
             }
 
             if (runtimeSkyboxMaterial == null)
             {
-                // Instantiate once, so repeated style changes update this
-                // one copy's properties instead of touching the shared
+                // Instantiate once, so repeated atmosphere changes update
+                // this one copy's properties instead of touching the shared
                 // template asset (same rule as never animating a shared
                 // Material directly).
                 runtimeSkyboxMaterial = new Material(skyboxMaterialTemplate);
             }
 
             RenderSettings.skybox = runtimeSkyboxMaterial;
-            profile.ApplySkybox(runtimeSkyboxMaterial);
+            atmosphere.ApplySkybox(runtimeSkyboxMaterial);
         }
 
         // Texture filtering is a per-Texture2D runtime property (Texture.filterMode),

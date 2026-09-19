@@ -77,6 +77,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** `VisualStyleProfile` no longer has fog or skybox fields -
+  those moved to a new `SceneAtmosphereProfile` asset type, applied by a
+  `SceneAtmosphere` component placed in each level scene (alongside its
+  `SpawnPoint`), via `StyleManager.ApplySceneAtmosphere`. Reasoning: fog and
+  skybox are inherently per-level (two rooms in the same game can want
+  completely different fog color/density or sky), unlike the rest of
+  `VisualStyleProfile` (ambient light, color grading, bloom, tonemapping,
+  texture filtering), which really is one global "look" for the whole game
+  and is correctly kept across every level load by `StyleManager`.
+  `StyleManager.ApplyProfile` no longer touches fog/skybox at all - only a
+  level's own `SceneAtmosphere` does, re-applying itself every time that
+  level's scene loads (RenderSettings, fog and skybox included, are reset
+  by every scene load). `VisualStyleProfile.ApplyFogAndAmbient` renamed to
+  `ApplyAmbient` (ambient light only now). `VisualStyleProfileEditor`
+  (grouped fog/skybox colors with a "sync" button) replaced by
+  `SceneAtmosphereProfileEditor`, same UI, on the new asset type.
 - **Breaking:** `InventoryManager` now holds a fixed number of slots
   (`Capacity`, `[SerializeField] capacity`, default 12) instead of an
   unbounded growing list. `Entries` replaced by `Slots`

@@ -4,15 +4,15 @@ using UnityEngine;
 namespace FilloPrinci.RetroFpa.Editor
 {
     /// <summary>
-    /// Custom editor for <see cref="VisualStyleProfile"/>: groups fog color
-    /// and skybox horizon/zenith colors together at the top of the
+    /// Custom editor for <see cref="SceneAtmosphereProfile"/>: groups fog
+    /// color and skybox horizon/zenith colors together at the top of the
     /// Inspector (instead of under separate "Fog"/"Skybox" headers), with a
     /// button to copy the fog color onto the skybox horizon - the two are
     /// meant to match so geometry fades into the sky instead of cutting
     /// against a mismatched horizon.
     /// </summary>
-    [CustomEditor(typeof(VisualStyleProfile))]
-    public class VisualStyleProfileEditor : UnityEditor.Editor
+    [CustomEditor(typeof(SceneAtmosphereProfile))]
+    public class SceneAtmosphereProfileEditor : UnityEditor.Editor
     {
         private static readonly string[] FogAndSkyFieldNames =
         {
