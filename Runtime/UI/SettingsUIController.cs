@@ -81,10 +81,19 @@ namespace FilloPrinci.RetroFpa
             }
         }
 
+        protected override void Start()
+        {
+            base.Start();
+
+            // Not OnEnable: Unity doesn't guarantee another object's Awake()
+            // has run by the time this OnEnable() fires, and PopulateFromSettings
+            // depends on SettingsManager.Instance being set by then. Start() is
+            // called only after every object's Awake/OnEnable has completed.
+            PopulateFromSettings();
+        }
+
         private void OnEnable()
         {
-            PopulateFromSettings();
-
             masterVolumeSlider?.onValueChanged.AddListener(HandleMasterVolumeChanged);
             musicVolumeSlider?.onValueChanged.AddListener(HandleMusicVolumeChanged);
             sfxVolumeSlider?.onValueChanged.AddListener(HandleSfxVolumeChanged);
