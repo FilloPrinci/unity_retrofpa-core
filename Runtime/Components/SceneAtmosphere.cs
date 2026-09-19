@@ -5,21 +5,51 @@ namespace FilloPrinci.RetroFpa
     /// <summary>
     /// Drop one of these in a level scene (alongside its <see cref="SpawnPoint"/>)
     /// and assign a <see cref="SceneAtmosphereProfile"/> to give that level its
-    /// own fog/skybox, independent of every other level. Unlike the global
-    /// <see cref="VisualStyleProfile"/> (applied once and kept across level
-    /// loads by <see cref="StyleManager"/>), this re-applies every time the
-    /// scene it lives in loads, since fog/skybox are per-scene RenderSettings
-    /// that a fresh scene load always resets.
+    /// own fog/skybox, independent of every other level.
     /// </summary>
+    /// <remarks>
+    /// Applies itself on <see cref="LevelSceneManager.LevelLoaded"/>, not
+    /// Awake/OnEnable/Start: <see cref="LevelSceneManager"/> calls
+    /// <c>SceneManager.SetActiveScene</c> right after this scene finishes
+    /// loading (needed so newly spawned objects default to this scene), and
+    /// that call resets RenderSettings (fog, skybox) to whatever this scene
+    /// had saved - which would silently undo an apply made any earlier in
+    /// the load, including from this component's own Awake/OnEnable/Start.
+    /// LevelLoaded only fires once that reset has already happened, so
+    /// reacting to it is the only ordering that sticks. Subscribing to a
+    /// static event in OnEnable is always safe (no dependency on another
+    /// object's Awake having run first) - unlike calling into another
+    /// singleton's instance directly, which is why this one isn't the same
+    /// class of bug fixed on SettingsUIController/Start().
+    /// </remarks>
     public class SceneAtmosphere : MonoBehaviour
     {
         [SerializeField] private SceneAtmosphereProfile profile;
 
-        // Not OnEnable/Awake: StyleManager must exist (its Awake must have
-        // run) before this can apply anything through it, and Unity only
-        // guarantees that by Start() - see SettingsUIController for the same
-        // reasoning applied to a UI screen depending on SettingsManager.
-        private void Start()
+        private void OnEnable()
+        {
+            LevelSceneManager.LevelLoaded += HandleLevelLoaded;
+        }
+
+        private void OnDisable()
+        {
+            LevelSceneManager.LevelLoaded -= HandleLevelLoaded;
+        }
+
+        private void HandleLevelLoaded(string sceneName)
+        {
+            // Only react to our own scene finishing its load - a
+            // SceneAtmosphere belonging to a scene that isn't the one that
+            // just loaded has nothing to do here.
+            if (gameObject.scene.name != sceneName)
+            {
+                return;
+            }
+
+            Apply();
+        }
+
+        private void Apply()
         {
             if (profile == null)
             {
