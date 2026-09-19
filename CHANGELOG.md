@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `SceneAtmosphere`: applied its fog/skybox from `Start()`, but that runs
+  during the level scene's own load - before `LevelSceneManager` calls
+  `SceneManager.SetActiveScene`, which resets RenderSettings (fog/skybox
+  included) to whatever the scene had saved, silently wiping it. Now applies
+  on `LevelSceneManager.LevelLoaded` instead (fires after `SetActiveScene`),
+  the same event `StyleManager` already uses for the same reason.
 - `SettingsUIController`: the locale/resolution dropdowns could get stuck on
   their default placeholder options ("Option A/B/C") for the whole session.
   `PopulateFromSettings()` (which reads `SettingsManager.Instance`) ran from
