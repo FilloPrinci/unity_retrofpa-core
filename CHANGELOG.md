@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `SettingsUIController`: the locale/resolution dropdowns could get stuck on
+  their default placeholder options ("Option A/B/C") for the whole session.
+  `PopulateFromSettings()` (which reads `SettingsManager.Instance`) ran from
+  `OnEnable()`, but Unity does not guarantee another object's `Awake()` has
+  completed by the time a sibling's `OnEnable()` fires — only `Start()` gives
+  that guarantee. Moved the call to `Start()`.
 - `RetroTwoLayer` Shader Graph: both texture layers were wired through a
   single explicit "Sampler State" node hardcoded to Point filtering, which
   overrides a texture's own sampler entirely and completely ignores
