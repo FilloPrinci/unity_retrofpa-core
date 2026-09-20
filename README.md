@@ -25,9 +25,10 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   `GameBootstrapper` (drives the first level load, gate-able from a main
   menu), `InventoryManager`, `DialogueManager`, `SettingsManager`
   (persisted audio/look-sensitivity/locale/graphics settings),
-  `StyleManager` (the game's global visual style — see below), and
-  `PersistentSingleton<T>`, the base class all of them share (Unity's
-  equivalent of a Godot autoload).
+  `StyleManager` (the game's global visual style — see below),
+  `SaveManager` (one JSON save slot — level, exact player position,
+  inventory, collected items — see below), and `PersistentSingleton<T>`,
+  the base class all of them share (Unity's equivalent of a Godot autoload).
 - **Player** (`Runtime/Components/Player/`) — `FirstPersonController`
   (move/look/cursor-lock, New Input System), `PlayerInteractor` (raycasts
   for `Interactable`s, drives the interaction prompt), `PlayerEquipmentController`
@@ -38,8 +39,11 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   `DialogueData`), `SceneChangeTrigger` (walk into a volume → load a level),
   `InteractableSceneChangeTrigger` (interact with an object → load a level —
   a door/ladder/exit, as opposed to a volume), `SceneAtmosphere` (gives one
-  level scene its own fog/skybox — see below), `SpawnPoint`, `NpcBase`
-  (Animator + `AnimatorOverrideController` slot), `Rotator`, `FresnelPulse`.
+  level scene its own fog/skybox — see below), `SaveableId` (a stable
+  per-instance id) + `SaveableCollectible` (bridges `Collectible` →
+  `SaveManager`, so a pickup stays gone across saves/revisits), `SpawnPoint`,
+  `NpcBase` (Animator + `AnimatorOverrideController` slot), `Rotator`,
+  `FresnelPulse`.
 - **UI shell** (`Runtime/UI/`) — `UIScreen`, the `CanvasGroup`-based base
   class every screen below builds on (show/hide without disabling the
   GameObject, shared cursor-lock/unlock counting across however many screens
@@ -47,15 +51,17 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   branching choices), `InventoryUIController` + `InventorySlotUI` (a fixed
   grid of slots, selection → name/description detail panel, an Equip/Unequip
   toggle, a live 3D preview of the equipped item rendered by a dedicated
-  camera into a `RenderTexture`), `MainMenuUIController`, `PauseMenuUIController`,
-  `SettingsUIController` (audio volumes, look sensitivity, locale, VSync,
-  fullscreen, resolution), `InteractionPromptUI`.
+  camera into a `RenderTexture`), `MainMenuUIController` (New Game, Continue
+  — disabled with no save file, Settings, Quit), `PauseMenuUIController`
+  (Resume, Save, Settings, Quit), `SettingsUIController` (audio volumes,
+  look sensitivity, locale, VSync, fullscreen, resolution), `InteractionPromptUI`.
 - **Data** (`Runtime/Data/`) — `ItemData` (icon, world prefab, equipped-model
   prefab, optional `EquippableBehavior`), `EquippableBehavior` +
   `MeleeEquippableBehavior`/`RangedEquippableBehavior`/`HeldItemEquippableBehavior`
   subclasses, `DialogueData` (nodes + branching choices, localized),
   `VisualStyleProfile` (the game's global look), `SceneAtmosphereProfile`
-  (one level's fog/skybox).
+  (one level's fog/skybox), `ItemDatabase` (hand-maintained item-id → asset
+  lookup, used by `SaveManager` to resolve a saved item back to its asset).
 - **Shaders** (`Runtime/Shaders/`) — `RetroTwoLayer` (2-layer blend + fresnel
   + hit-flash Shader Graph), `Retro FPA/Gradient Skybox` (flat 2-color
   vertical gradient, since URP's procedural sky can't produce a stylized
@@ -161,7 +167,6 @@ Not yet implemented — real gaps, not oversights:
 - **Scene Template.** No Unity Scene Template asset yet for scaffolding a
   new level (fog/skybox/SpawnPoint pre-wired) — new levels are still built
   by hand or duplicated from an existing one.
-- **Save/Load.** Not implemented.
 
 ## License
 
