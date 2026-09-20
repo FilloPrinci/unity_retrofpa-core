@@ -2,9 +2,10 @@
 
 A Unity UPM package providing the reusable "engine" for retro low-poly
 (PS1 / N64 / GameCube-era) first-person horror/adventure games: decoupled
-manager systems, data-driven `ScriptableObject` content, ready-to-place
-prefabs, a custom retro-style rendering pipeline, and editor tooling for
-authoring dialogue and items.
+manager systems, a full first-person player controller, a data-driven UI
+shell (dialogue, inventory, menus, settings), data-driven `ScriptableObject`
+content, ready-to-place prefabs, a custom retro-style rendering pipeline, and
+editor tooling for authoring dialogue and items.
 
 This package is the Unity counterpart of an existing Godot 4.6.3 "Retro FPA"
 template. It is not a literal code port — it reproduces the same
@@ -17,26 +18,79 @@ repository for the full design rationale.
 This package contains **no game-specific content** — it is meant to be
 consumed by one or more Unity projects, such as `retrofpa-project-template`.
 
-## Package layout
+## What's here
 
-```
-retrofpa-core/
-  package.json
-  Runtime/    Manager singletons (GameManager, SceneManager, SettingsManager, ...),
-              components (Interactable, Grabbable, Collectible, Rotator,
-              FresnelPulse, DialogueTrigger, SceneChangeTrigger, SpawnPoint, ...),
-              ScriptableObjects (ItemData, DialogueData, VisualStyleProfile,
-              EquippableBehavior + melee/ranged subclasses, ...), shaders
-  Editor/     EditorWindow docks, custom PropertyDrawers, scaffolding wizards,
-              content validators
-  Samples~/   Base prefabs ready to import into a consuming project
-              (NpcBase, WorldItemBase, SceneChangeTrigger, SpawnPoint, ...)
-```
+- **Core managers** (`Runtime/Core/`) — `GameManager` (game state),
+  `LevelSceneManager` (additive level load/unload, spawn placement),
+  `GameBootstrapper` (drives the first level load, gate-able from a main
+  menu), `InventoryManager`, `DialogueManager`, `SettingsManager`
+  (persisted audio/look-sensitivity/locale/graphics settings),
+  `StyleManager` (the game's global visual style — see below), and
+  `PersistentSingleton<T>`, the base class all of them share (Unity's
+  equivalent of a Godot autoload).
+- **Player** (`Runtime/Components/Player/`) — `FirstPersonController`
+  (move/look/cursor-lock, New Input System), `PlayerInteractor` (raycasts
+  for `Interactable`s, drives the interaction prompt), `PlayerEquipmentController`
+  (attack input → the equipped item's `EquippableBehavior`).
+- **World components** (`Runtime/Components/`) — `Interactable` (generic
+  "this can be interacted with" building block), `Collectible`/`CollectibleItem`
+  (pickup → `InventoryManager`), `DialogueTrigger` (interact → starts a
+  `DialogueData`), `SceneChangeTrigger` (walk into a volume → load a level),
+  `InteractableSceneChangeTrigger` (interact with an object → load a level —
+  a door/ladder/exit, as opposed to a volume), `SceneAtmosphere` (gives one
+  level scene its own fog/skybox — see below), `SpawnPoint`, `NpcBase`
+  (Animator + `AnimatorOverrideController` slot), `Rotator`, `FresnelPulse`.
+- **UI shell** (`Runtime/UI/`) — `UIScreen`, the `CanvasGroup`-based base
+  class every screen below builds on (show/hide without disabling the
+  GameObject, shared cursor-lock/unlock counting across however many screens
+  are open at once): `DialogueUIController` (speaker/body text, linear or
+  branching choices), `InventoryUIController` + `InventorySlotUI` (a fixed
+  grid of slots, selection → name/description detail panel, an Equip/Unequip
+  toggle, a live 3D preview of the equipped item rendered by a dedicated
+  camera into a `RenderTexture`), `MainMenuUIController`, `PauseMenuUIController`,
+  `SettingsUIController` (audio volumes, look sensitivity, locale, VSync,
+  fullscreen, resolution), `InteractionPromptUI`.
+- **Data** (`Runtime/Data/`) — `ItemData` (icon, world prefab, equipped-model
+  prefab, optional `EquippableBehavior`), `EquippableBehavior` +
+  `MeleeEquippableBehavior`/`RangedEquippableBehavior`/`HeldItemEquippableBehavior`
+  subclasses, `DialogueData` (nodes + branching choices, localized),
+  `VisualStyleProfile` (the game's global look), `SceneAtmosphereProfile`
+  (one level's fog/skybox).
+- **Shaders** (`Runtime/Shaders/`) — `RetroTwoLayer` (2-layer blend + fresnel
+  + hit-flash Shader Graph), `Retro FPA/Gradient Skybox` (flat 2-color
+  vertical gradient, since URP's procedural sky can't produce a stylized
+  flat look).
+- **Editor tooling** (`Editor/`) — a `Window/Retro FPA/Dashboard` EditorWindow,
+  a custom inspector for `DialogueData`, content validators
+  (`Retro FPA/Validate/Items` and `/Dialogues`), and a custom inspector for
+  `SceneAtmosphereProfile` (groups fog/skybox colors with a "sync" button).
+- **Samples~** — ready-to-import base prefabs (`NpcBase`, `WorldItemBase`
+  Physical/Pickupable variants). See [`Samples~/README.md`](Samples~/README.md).
 
 `Runtime` and `Editor` are separate Assembly Definitions
 (`FilloPrinci.RetroFpa.Runtime` and `FilloPrinci.RetroFpa.Editor`, the latter
 referencing the former and restricted to the `Editor` platform), so editor-only
 code never ships in player builds.
+
+## Global style vs. per-level atmosphere
+
+`VisualStyleProfile` and `SceneAtmosphereProfile` look similar (both drive
+render settings) but are intentionally split by scope:
+
+- **`VisualStyleProfile`** (ambient light, color grading, bloom, tonemapping,
+  texture filtering) is the game's overall "look" — assigned once to
+  `StyleManager` and kept applied across every level load. Two levels in the
+  same game should look like the same game.
+- **`SceneAtmosphereProfile`** (fog, skybox) is per-level on purpose — a
+  `SceneAtmosphere` component in a level scene applies it via
+  `StyleManager.ApplySceneAtmosphere` whenever that scene finishes loading
+  (`LevelSceneManager.LevelLoaded`, not `Start()` — see the class doc comment
+  for why the timing matters). Two rooms in the same game can reasonably
+  want completely different fog color/density or sky.
+
+Changing the whole game's style is reassigning `StyleManager`'s
+`VisualStyleProfile`; changing one level's mood is reassigning that level's
+`SceneAtmosphere` component's `SceneAtmosphereProfile` — independently.
 
 ## Installing into a project
 
@@ -76,8 +130,8 @@ releases accordingly. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 - **Decoupled systems.** Managers communicate through C# events, not direct
   references, mirroring the Godot template's autoload + signal pattern.
-- **Data-driven content.** Game content (items, dialogue, visual styles) is
-  authored as `ScriptableObject` assets, not hardcoded.
+- **Data-driven content.** Game content (items, dialogue, visual style,
+  level atmosphere) is authored as `ScriptableObject` assets, not hardcoded.
 - **Prefabs over runtime construction.** Content that Godot built by having
   `@tool` scripts self-assemble in the editor is instead built as real Prefab
   Variants in Unity — visible immediately in the Scene view, no runtime
@@ -90,6 +144,24 @@ releases accordingly. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 - **Additive scene loading only.** Levels are always loaded additively over a
   persistent scene; `LoadSceneMode.Single` would destroy persistent state and
   is never used for levels.
+- **Only `Start()` may assume another singleton already exists.** `Awake()`
+  and `OnEnable()` run in an order Unity doesn't guarantee across different
+  objects/scenes — code that reads another manager's `Instance` synchronously
+  (rather than reacting to an event) belongs in `Start()`, not `OnEnable()`.
+
+## Known gaps
+
+Not yet implemented — real gaps, not oversights:
+
+- **Combat/damage.** `MeleeEquippableBehavior`/`RangedEquippableBehavior.PerformAction`
+  are hook points only; there's no `Health`, `TakeDamage`, or death/respawn
+  flow yet. Equipping a weapon plays no gameplay role beyond the input path.
+- **HUD.** Only `InteractionPromptUI` exists; no health/ammo/objective
+  display (would follow naturally once combat exists).
+- **Scene Template.** No Unity Scene Template asset yet for scaffolding a
+  new level (fog/skybox/SpawnPoint pre-wired) — new levels are still built
+  by hand or duplicated from an existing one.
+- **Save/Load.** Not implemented.
 
 ## License
 
