@@ -18,6 +18,10 @@ namespace FilloPrinci.RetroFpa
         [SerializeField]
         private LocalizedString promptText;
 
+        [Tooltip("Optional sound played on interact. Leave empty for AudioProfile's default interact sound.")]
+        [SerializeField]
+        private AudioClip interactSound;
+
         [SerializeField]
         private UnityEvent<GameObject> onInteract;
 
@@ -29,6 +33,7 @@ namespace FilloPrinci.RetroFpa
         /// <summary>Called by whatever detects the player interacting with this object.</summary>
         public void Interact(GameObject interactor)
         {
+            AudioManager.Instance?.PlayInteract(interactSound, transform.position);
             onInteract?.Invoke(interactor);
             Interacted?.Invoke(interactor);
         }

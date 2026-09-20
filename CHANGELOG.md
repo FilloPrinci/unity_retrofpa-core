@@ -42,6 +42,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Audio**: `AudioManager` + `AudioProfile` (global UI hover/confirm sounds,
+  main menu music, and default footstep/pickup/interact sounds), split from
+  per-object/per-scene overrides the same way `VisualStyleProfile` (global)
+  is split from `SceneAtmosphereProfile` (per-level):
+  - `Interactable`/`Collectible` gained an optional `interactSound`/
+    `pickupSound` clip - falls back to the profile's default when empty.
+  - `SurfaceAudio`: optional per-surface footstep sound; `FootstepAudio`
+    (on the player) raycasts down for one and falls back to the profile's
+    default.
+  - `SceneAmbientAudio`: one level's looping ambient track/music, the audio
+    equivalent of `SceneAtmosphere` (same `LevelSceneManager.LevelLoaded`
+    timing, same reasoning).
+  - `UIButtonSound`: add to a `Button` to play the profile's hover
+    (mouse pointer-enter or gamepad/keyboard `ISelectHandler`) and confirm
+    (`onClick`) sounds.
+  - `MainMenuUIController` plays the profile's main menu music from
+    `Start()`.
+  - Two `AudioSource`s (UI one-shots, looping music) are created at
+    runtime by `AudioManager` - nothing about them needs scene authoring.
+    World sounds (footstep/pickup/interact) go through
+    `AudioSource.PlayClipAtPoint`, no persistent source needed.
 - **Save/Load**, one slot, JSON on disk (`Application.persistentDataPath`):
   `SaveManager.SaveGame()`/`LoadGame()` capture/restore the current level,
   the player's exact position/rotation, the full inventory (contents +

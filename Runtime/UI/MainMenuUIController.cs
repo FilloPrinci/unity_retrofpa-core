@@ -47,13 +47,15 @@ namespace FilloPrinci.RetroFpa
         {
             base.Start();
 
-            // Not Awake/OnEnable: reading SaveManager.Instance needs its
-            // Awake to have already run, which Unity only guarantees by
-            // Start() - see SettingsUIController for the same reasoning.
+            // Not Awake/OnEnable: reading SaveManager.Instance/AudioManager.Instance
+            // needs their Awake to have already run, which Unity only
+            // guarantees by Start() - see SettingsUIController for the same reasoning.
             if (continueButton != null)
             {
                 continueButton.interactable = SaveManager.Instance != null && SaveManager.Instance.HasSaveFile;
             }
+
+            AudioManager.Instance?.PlayMainMenuMusic();
         }
 
         private static void ApplyLabel(Button button, LocalizedString label)
