@@ -27,23 +27,28 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   (persisted audio/look-sensitivity/locale/graphics settings),
   `StyleManager` (the game's global visual style — see below),
   `SaveManager` (one JSON save slot — level, exact player position,
-  inventory, collected items — see below), and `PersistentSingleton<T>`,
-  the base class all of them share (Unity's equivalent of a Godot autoload).
+  inventory, collected items — see below), `AudioManager` (global UI/menu
+  sounds + one-shot world sounds — see "Global vs. per-object/per-scene
+  audio" below), and `PersistentSingleton<T>`, the base class all of them
+  share (Unity's equivalent of a Godot autoload).
 - **Player** (`Runtime/Components/Player/`) — `FirstPersonController`
   (move/look/cursor-lock, New Input System), `PlayerInteractor` (raycasts
   for `Interactable`s, drives the interaction prompt), `PlayerEquipmentController`
-  (attack input → the equipped item's `EquippableBehavior`).
+  (attack input → the equipped item's `EquippableBehavior`), `FootstepAudio`
+  (raycasts down for a `SurfaceAudio` while walking).
 - **World components** (`Runtime/Components/`) — `Interactable` (generic
-  "this can be interacted with" building block), `Collectible`/`CollectibleItem`
-  (pickup → `InventoryManager`), `DialogueTrigger` (interact → starts a
-  `DialogueData`), `SceneChangeTrigger` (walk into a volume → load a level),
+  "this can be interacted with" building block, optional interact sound),
+  `Collectible`/`CollectibleItem` (pickup → `InventoryManager`, optional
+  pickup sound), `DialogueTrigger` (interact → starts a `DialogueData`),
+  `SceneChangeTrigger` (walk into a volume → load a level),
   `InteractableSceneChangeTrigger` (interact with an object → load a level —
   a door/ladder/exit, as opposed to a volume), `SceneAtmosphere` (gives one
-  level scene its own fog/skybox — see below), `SaveableId` (a stable
-  per-instance id) + `SaveableCollectible` (bridges `Collectible` →
-  `SaveManager`, so a pickup stays gone across saves/revisits), `SpawnPoint`,
-  `NpcBase` (Animator + `AnimatorOverrideController` slot), `Rotator`,
-  `FresnelPulse`.
+  level scene its own fog/skybox — see below), `SceneAmbientAudio` (gives
+  one level scene its own looping ambient track), `SurfaceAudio` (optional
+  per-surface footstep sound), `SaveableId` (a stable per-instance id) +
+  `SaveableCollectible` (bridges `Collectible` → `SaveManager`, so a pickup
+  stays gone across saves/revisits), `SpawnPoint`, `NpcBase` (Animator +
+  `AnimatorOverrideController` slot), `Rotator`, `FresnelPulse`.
 - **UI shell** (`Runtime/UI/`) — `UIScreen`, the `CanvasGroup`-based base
   class every screen below builds on (show/hide without disabling the
   GameObject, shared cursor-lock/unlock counting across however many screens
@@ -54,14 +59,17 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   camera into a `RenderTexture`), `MainMenuUIController` (New Game, Continue
   — disabled with no save file, Settings, Quit), `PauseMenuUIController`
   (Resume, Save, Settings, Quit), `SettingsUIController` (audio volumes,
-  look sensitivity, locale, VSync, fullscreen, resolution), `InteractionPromptUI`.
+  look sensitivity, locale, VSync, fullscreen, resolution),
+  `InteractionPromptUI`, `UIButtonSound` (add to any `Button` for the global
+  hover/confirm sounds).
 - **Data** (`Runtime/Data/`) — `ItemData` (icon, world prefab, equipped-model
   prefab, optional `EquippableBehavior`), `EquippableBehavior` +
   `MeleeEquippableBehavior`/`RangedEquippableBehavior`/`HeldItemEquippableBehavior`
   subclasses, `DialogueData` (nodes + branching choices, localized),
   `VisualStyleProfile` (the game's global look), `SceneAtmosphereProfile`
-  (one level's fog/skybox), `ItemDatabase` (hand-maintained item-id → asset
-  lookup, used by `SaveManager` to resolve a saved item back to its asset).
+  (one level's fog/skybox), `AudioProfile` (the game's global sounds — see
+  below), `ItemDatabase` (hand-maintained item-id → asset lookup, used by
+  `SaveManager` to resolve a saved item back to its asset).
 - **Shaders** (`Runtime/Shaders/`) — `RetroTwoLayer` (2-layer blend + fresnel
   + hit-flash Shader Graph), `Retro FPA/Gradient Skybox` (flat 2-color
   vertical gradient, since URP's procedural sky can't produce a stylized
@@ -97,6 +105,28 @@ render settings) but are intentionally split by scope:
 Changing the whole game's style is reassigning `StyleManager`'s
 `VisualStyleProfile`; changing one level's mood is reassigning that level's
 `SceneAtmosphere` component's `SceneAtmosphereProfile` — independently.
+
+## Global vs. per-object/per-scene audio
+
+Same split again, this time for sound, through `AudioManager`:
+
+- **Global, via `AudioProfile`** — UI hover/confirm sounds, the main menu
+  music, and the *default* footstep/pickup/interact sounds. Assigned once to
+  `AudioManager` and kept for the whole session.
+- **Per-object override, optional** — `Interactable.interactSound`,
+  `Collectible.pickupSound`, `SurfaceAudio.footstepSound` (checked via a
+  downward raycast from `FootstepAudio` on the player). Each falls back to
+  `AudioProfile`'s matching default when left empty, so a game can ship with
+  just the defaults set and add per-object variety later without touching
+  any code.
+- **Per-scene, via `SceneAmbientAudio`** — one level's looping ambient
+  track/music, independent of every other level. No default/fallback here,
+  same as `SceneAtmosphereProfile`'s skybox: a level with none just plays
+  nothing.
+
+All three play through `AudioManager`, which is safe to call with a null
+clip anywhere (nothing plays, no error) — a project can wire up the whole
+audio system before a single sound asset exists.
 
 ## Installing into a project
 
