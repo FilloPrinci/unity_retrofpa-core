@@ -42,6 +42,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Save/Load**, one slot, JSON on disk (`Application.persistentDataPath`):
+  `SaveManager.SaveGame()`/`LoadGame()` capture/restore the current level,
+  the player's exact position/rotation, the full inventory (contents +
+  equipped item), and which collectibles were already picked up.
+  - `SaveableId`: a stable per-instance id (auto-filled with a GUID when
+    first added), independent of Unity's own instance ids. Stack it
+    alongside `Collectible` on anything that should stay collected.
+  - `SaveableCollectible`: bridges a `Collectible` to `SaveManager` (same
+    role `CollectibleItem` plays for `InventoryManager`) — tells it a
+    `SaveableId` is done, for the rest of the session and any future save.
+    `SaveManager` also hides already-collected ids on every level load
+    (not just after `LoadGame()`), so revisiting a level doesn't respawn
+    something already picked up earlier the same session.
+  - `ItemDatabase`: a hand-maintained list of every `ItemData`, resolving a
+    saved item id back to its asset (a save file can't hold a
+    ScriptableObject reference across sessions/builds).
+  - `InventoryManager.ClearAll()`: empties every slot and unequips, for
+    restoring a save over a session already in progress.
+  - `LevelSceneManager` gained `CurrentLevelName`/`PersistentPlayerRoot`
+    getters for `SaveManager` to read from.
+  - `MainMenuUIController` gained a `continueButton` (interactable only
+    when `SaveManager.HasSaveFile`), `PauseMenuUIController` gained a
+    `saveButton` — both call straight into `SaveManager`.
 - `InteractableSceneChangeTrigger`: loads a different level when the object
   it's on is interacted with (via the required `Interactable`) — a door, a
   ladder, an exit sign. Same fields/behavior as `SceneChangeTrigger` (target

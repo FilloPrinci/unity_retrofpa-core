@@ -17,12 +17,14 @@ namespace FilloPrinci.RetroFpa
     {
         [SerializeField] private InputActionReference toggleAction;
         [SerializeField] private Button resumeButton;
+        [SerializeField] private Button saveButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
         [SerializeField] private UIScreen settingsScreen;
 
         [Header("Localization")]
         [SerializeField] private LocalizedString resumeLabel;
+        [SerializeField] private LocalizedString saveLabel;
         [SerializeField] private LocalizedString settingsLabel;
         [SerializeField] private LocalizedString quitLabel;
 
@@ -30,10 +32,12 @@ namespace FilloPrinci.RetroFpa
         {
             base.Awake();
             resumeButton?.onClick.AddListener(Resume);
+            saveButton?.onClick.AddListener(HandleSaveClicked);
             settingsButton?.onClick.AddListener(HandleSettingsClicked);
             quitButton?.onClick.AddListener(HandleQuitClicked);
 
             ApplyLabel(resumeButton, resumeLabel);
+            ApplyLabel(saveButton, saveLabel);
             ApplyLabel(settingsButton, settingsLabel);
             ApplyLabel(quitButton, quitLabel);
         }
@@ -93,6 +97,17 @@ namespace FilloPrinci.RetroFpa
         {
             Hide();
             GameManager.Instance?.SetGameState(GameState.Playing);
+        }
+
+        private void HandleSaveClicked()
+        {
+            if (SaveManager.Instance == null)
+            {
+                Debug.LogError("[PauseMenuUIController] No SaveManager in the scene.", this);
+                return;
+            }
+
+            SaveManager.Instance.SaveGame();
         }
 
         private void HandleSettingsClicked() => settingsScreen?.Show();

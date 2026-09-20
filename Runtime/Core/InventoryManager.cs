@@ -156,6 +156,21 @@ namespace FilloPrinci.RetroFpa
 
         public bool HasItem(ItemData item, int quantity = 1) => GetQuantity(item) >= quantity;
 
+        /// <summary>Empties every slot and unequips whatever was equipped. Used when restoring a save over a session already in progress.</summary>
+        public void ClearAll()
+        {
+            Unequip(null);
+
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] != null)
+                {
+                    slots[i] = null;
+                    SlotChanged?.Invoke(i, null);
+                }
+            }
+        }
+
         /// <summary>Equips <paramref name="item"/> (must be an equippable item currently held), unequipping whatever was equipped before.</summary>
         public void Equip(ItemData item, GameObject wielder)
         {

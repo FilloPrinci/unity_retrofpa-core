@@ -36,6 +36,12 @@ namespace FilloPrinci.RetroFpa
 
         private Scene? currentLevelScene;
 
+        /// <summary>Name of the currently loaded level scene, or null if none has loaded yet.</summary>
+        public string CurrentLevelName => currentLevelScene?.name;
+
+        /// <summary>The persistent player root repositioned on every level load - see <see cref="SetPersistentPlayerRoot"/>.</summary>
+        public Transform PersistentPlayerRoot => persistentPlayerRoot;
+
         /// <summary>
         /// Assigns (or reassigns) the transform that gets repositioned to a
         /// <see cref="SpawnPoint"/> on every level load.
