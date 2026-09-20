@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `PlayerInteractor`: the "[E] Interact" prompt could get stuck on screen
+  forever after loading a different level from an interactable (e.g. via
+  the new `InteractableSceneChangeTrigger`). Unity's `==` treats a destroyed
+  object as equal to `null`, so once the looked-at `Interactable` was
+  destroyed along with its unloaded scene, comparing the next raycast's
+  (genuinely null) result against the stale `currentTarget` field read as
+  "no change" and never fired `LookTargetChanged(null)` to clear the UI.
+  Fixed the comparison to use `ReferenceEquals`, and also proactively clears
+  `currentTarget` on `LevelSceneManager.LevelLoadStarted` so the prompt
+  disappears the instant a level change begins rather than a frame late.
 - `SceneAtmosphere`: applied its fog/skybox from `Start()`, but that runs
   during the level scene's own load - before `LevelSceneManager` calls
   `SceneManager.SetActiveScene`, which resets RenderSettings (fog/skybox

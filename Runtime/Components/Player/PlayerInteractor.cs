@@ -31,6 +31,8 @@ namespace FilloPrinci.RetroFpa
                 interactAction.action.Enable();
                 interactAction.action.performed += HandleInteractPerformed;
             }
+
+            LevelSceneManager.LevelLoadStarted += HandleLevelLoadStarted;
         }
 
         private void OnDisable()
@@ -41,6 +43,19 @@ namespace FilloPrinci.RetroFpa
                 interactAction.action.Disable();
             }
 
+            LevelSceneManager.LevelLoadStarted -= HandleLevelLoadStarted;
+            ClearCurrentTarget();
+        }
+
+        // A level load destroys the current target along with the rest of
+        // its scene, so clear it up front rather than waiting for next
+        // frame's raycast to notice - see the ReferenceEquals note in
+        // UpdateLookTarget for why that comparison alone doesn't reliably
+        // catch it once the target is already destroyed.
+        private void HandleLevelLoadStarted(string sceneName) => ClearCurrentTarget();
+
+        private void ClearCurrentTarget()
+        {
             if (currentTarget != null)
             {
                 currentTarget = null;
@@ -52,11 +67,7 @@ namespace FilloPrinci.RetroFpa
         {
             if (!FirstPersonController.IsCursorLocked)
             {
-                if (currentTarget != null)
-                {
-                    currentTarget = null;
-                    LookTargetChanged?.Invoke(null);
-                }
+                ClearCurrentTarget();
                 return;
             }
 
@@ -66,7 +77,14 @@ namespace FilloPrinci.RetroFpa
         private void UpdateLookTarget()
         {
             Interactable target = Raycast();
-            if (target == currentTarget)
+
+            // ReferenceEquals, not ==: Unity's overridden == treats a
+            // destroyed object as equal to null, so if currentTarget was
+            // destroyed (e.g. its scene got unloaded) while target is a
+            // genuine null (nothing hit), target == currentTarget would be
+            // true and this would wrongly no-op forever instead of clearing
+            // the stale target and its UI prompt.
+            if (ReferenceEquals(target, currentTarget))
             {
                 return;
             }
