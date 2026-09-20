@@ -32,6 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `InteractableSceneChangeTrigger`: loads a different level when the object
+  it's on is interacted with (via the required `Interactable`) — a door, a
+  ladder, an exit sign. Same fields/behavior as `SceneChangeTrigger` (target
+  scene name + optional spawn point id), but triggered by the player's
+  interact input instead of walking into a physics trigger volume.
 - `Retro FPA/Gradient Skybox` shader: minimal 2-color vertical gradient
   skybox (horizon → zenith, no atmospheric scattering). `Skybox/Procedural`
   (URP's bundled physically-based sky) can't produce a flat retro look —
