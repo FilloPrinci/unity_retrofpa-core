@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sounds and world one-shots (footstep/pickup/interact), both at startup
   (from `Start()`, the persisted values) and live as the sliders move.
   The sliders still run 0..1 in the UI, but `AudioManager` scales them by
-  `maxMusicVolume` (default 0.5) and `maxSfxVolume` (default 0.25), so the
+  `maxMusicVolume` (default 0.75) and `maxSfxVolume` (default 0.5), so the
   loudest setting is not a clip's full volume.
 - `PlayerInteractor`: the "[E] Interact" prompt could get stuck on screen
   forever after loading a different level from an interactable (e.g. via
