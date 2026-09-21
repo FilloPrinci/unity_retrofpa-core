@@ -5,15 +5,16 @@ using UnityEngine.UI;
 namespace FilloPrinci.RetroFpa
 {
     /// <summary>
-    /// Plays the global UI selection/confirm sounds (<see cref="AudioProfile"/>,
+    /// Plays the global UI hover/confirm sounds (<see cref="AudioProfile"/>,
     /// via <see cref="AudioManager"/>) for the <see cref="Button"/> on this
-    /// GameObject. Add it to any button that should make sound. The
-    /// selection sound fires when the button becomes the selected one
-    /// (gamepad/keyboard navigation) - NOT on mouse hover, and NOT when the
-    /// selection comes from a click (that only plays the confirm sound).
+    /// GameObject. Add it to any button that should make sound. The hover
+    /// sound fires on mouse pointer-enter and on gamepad/keyboard navigation
+    /// (<see cref="ISelectHandler"/>), but not again when a click selects the
+    /// button. Don't want a hover sound at all? Leave
+    /// <see cref="AudioProfile"/>'s UI Hover Sound empty.
     /// </summary>
     [RequireComponent(typeof(Button))]
-    public class UIButtonSound : MonoBehaviour, ISelectHandler
+    public class UIButtonSound : MonoBehaviour, IPointerEnterHandler, ISelectHandler
     {
         private Button button;
 
@@ -32,11 +33,13 @@ namespace FilloPrinci.RetroFpa
             button.onClick.RemoveListener(HandleClick);
         }
 
+        public void OnPointerEnter(PointerEventData eventData) => AudioManager.Instance?.PlayUIHover();
+
         public void OnSelect(BaseEventData eventData)
         {
-            // A click selects the button too, passing the pointer event along;
-            // navigation (keyboard/gamepad) doesn't. Only navigation should
-            // play the selection sound, so a click is just the confirm sound.
+            // A click selects the button too, passing the pointer event along
+            // (navigation doesn't) - the pointer already played its hover sound
+            // on enter, so don't repeat it on the click.
             if (eventData is PointerEventData)
             {
                 return;
