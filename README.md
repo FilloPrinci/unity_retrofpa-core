@@ -128,6 +128,24 @@ All three play through `AudioManager`, which is safe to call with a null
 clip anywhere (nothing plays, no error) — a project can wire up the whole
 audio system before a single sound asset exists.
 
+### Using your own audio
+
+This package ships **no audio files** — you bring your own, and nothing in
+it depends on any particular sound library. To set it up in a project:
+
+1. Create an `AudioProfile` (`Assets → Create → Retro FPA → Audio Profile`)
+   and assign your clips: UI hover/confirm, main menu music, and the default
+   footstep/pickup/interact sounds. Any field left empty is simply silent.
+2. Add an `AudioManager` to your persistent scene (next to the other
+   managers) and assign the profile to its *Initial Profile*.
+3. Add `UIButtonSound` to each `Button` that should make UI sounds, and
+   `FootstepAudio` to the player.
+4. Optionally add per-level `SceneAmbientAudio`, per-surface `SurfaceAudio`,
+   and per-object clips on `Interactable`/`Collectible`.
+
+Because assets are referenced by Unity GUID, the audio you assign lives in
+*your* project, not in this package.
+
 ## Installing into a project
 
 While developing this package alongside a consuming project, reference it by
