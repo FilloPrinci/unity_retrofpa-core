@@ -212,9 +212,7 @@ Not yet implemented — real gaps, not oversights:
   flow yet. Equipping a weapon plays no gameplay role beyond the input path.
 - **HUD.** Only `InteractionPromptUI` exists; no health/ammo/objective
   display (would follow naturally once combat exists).
-- **Scene Template.** No Unity Scene Template asset yet for scaffolding a
-  new level (fog/skybox/SpawnPoint pre-wired) — new levels are still built
-  by hand or duplicated from an existing one.
+
 
 ## License
 
