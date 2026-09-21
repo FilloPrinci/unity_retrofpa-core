@@ -165,9 +165,8 @@ local file path in the project's `Packages/manifest.json`:
 to each other on disk — see `retrofpa-project-template`'s manifest for a
 working example).
 
-Once the package stabilizes and a per-project "pull updates" workflow is
-needed instead of paired local development, this will be switched to a
-git URL pinned to a release tag, e.g.:
+For normal use, reference a release tag by git URL (this is what
+`retrofpa-project-template` does):
 
 ```json
 {
