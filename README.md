@@ -76,7 +76,9 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   flat look).
 - **Editor tooling** (`Editor/`) — a `Window/Retro FPA/Dashboard` EditorWindow,
   a custom inspector for `DialogueData`, content validators
-  (`Retro FPA/Validate/Items` and `/Dialogues`), and a custom inspector for
+  (`Retro FPA/Validate/Items`, `/Dialogues` and `/Levels` — the latter
+  checks every scene in Build Settings for missing managers, spawn points,
+  atmospheres, duplicate save ids and broken scene-change targets), and a custom inspector for
   `SceneAtmosphereProfile` (groups fog/skybox colors with a "sync" button).
 - **Samples~** — ready-to-import base prefabs (`NpcBase`, `WorldItemBase`
   Physical/Pickupable variants). See [`Samples~/README.md`](Samples~/README.md).

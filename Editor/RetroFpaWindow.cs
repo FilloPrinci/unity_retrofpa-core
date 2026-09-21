@@ -33,6 +33,11 @@ namespace FilloPrinci.RetroFpa.Editor
                 {
                     ShowResults(ItemValidator.ValidateAll());
                 }
+
+                if (GUILayout.Button("Validate Levels"))
+                {
+                    ShowResults(LevelValidator.ValidateAll());
+                }
             }
 
             EditorGUILayout.Space();

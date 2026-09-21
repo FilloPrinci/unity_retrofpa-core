@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `Retro FPA/Validate/Levels` (also a "Validate Levels" button in the
+  Dashboard): scans the scenes in Build Settings. The persistent scene must
+  have `GameBootstrapper` and `GameManager` (plus warnings for the other
+  managers and the Player). Each level is checked for a `SpawnPoint` (unique
+  ids), one `SceneAtmosphere` with a profile, at most one `SceneAmbientAudio`,
+  no managers or Player inside the level, empty/duplicate `SaveableId`s,
+  `Collectible`s without `SaveableCollectible`, and scene-change triggers whose
+  target scene/spawn point doesn't exist. Scenes with a `SpawnPoint` that are
+  missing from Build Settings are flagged too.
+
 ### Fixed
 
 - `AudioManager`: the Music and SFX volume sliders in Settings had no effect
