@@ -24,6 +24,7 @@ namespace FilloPrinci.RetroFpa
 
         private AudioSource uiSource;
         private AudioSource musicSource;
+        private float sfxVolume = 1f;
 
         public AudioProfile Profile { get; private set; }
 
@@ -43,9 +44,49 @@ namespace FilloPrinci.RetroFpa
             musicSource.playOnAwake = false;
             musicSource.loop = true;
 
+            SettingsManager.MusicVolumeChanged += HandleMusicVolumeChanged;
+            SettingsManager.SfxVolumeChanged += HandleSfxVolumeChanged;
+
             if (initialProfile != null)
             {
                 ApplyProfile(initialProfile);
+            }
+        }
+
+        // Start, not Awake: reading SettingsManager.Instance needs its Awake to
+        // have run. Later changes arrive through the events subscribed in Awake.
+        // (Master volume needs nothing here: SettingsManager already drives
+        // AudioListener.volume, which scales every source.)
+        private void Start()
+        {
+            if (SettingsManager.Instance != null)
+            {
+                HandleMusicVolumeChanged(SettingsManager.Instance.MusicVolume);
+                HandleSfxVolumeChanged(SettingsManager.Instance.SfxVolume);
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            SettingsManager.MusicVolumeChanged -= HandleMusicVolumeChanged;
+            SettingsManager.SfxVolumeChanged -= HandleSfxVolumeChanged;
+        }
+
+        private void HandleMusicVolumeChanged(float value)
+        {
+            if (musicSource != null)
+            {
+                musicSource.volume = value;
+            }
+        }
+
+        private void HandleSfxVolumeChanged(float value)
+        {
+            sfxVolume = value;
+            if (uiSource != null)
+            {
+                uiSource.volume = value;
             }
         }
 
@@ -95,7 +136,7 @@ namespace FilloPrinci.RetroFpa
         {
             if (clip != null)
             {
-                AudioSource.PlayClipAtPoint(clip, position, worldSoundVolume);
+                AudioSource.PlayClipAtPoint(clip, position, worldSoundVolume * sfxVolume);
             }
         }
 

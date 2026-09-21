@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `AudioManager`: the Music and SFX volume sliders in Settings had no effect
+  (only Master worked, via `AudioListener.volume`). `AudioManager` now applies
+  `SettingsManager`'s music volume to its music source and SFX volume to UI
+  sounds and world one-shots (footstep/pickup/interact), both at startup
+  (from `Start()`, the persisted values) and live as the sliders move.
 - `PlayerInteractor`: the "[E] Interact" prompt could get stuck on screen
   forever after loading a different level from an interactable (e.g. via
   the new `InteractableSceneChangeTrigger`). Unity's `==` treats a destroyed
