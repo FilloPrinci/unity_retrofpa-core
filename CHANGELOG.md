@@ -64,9 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     timing, same reasoning).
   - UI hover sounds play one at a time: a new hover cuts off the one still
     playing (own `AudioSource`, so a confirm sound is never cut off by it).
-  - `UIButtonSound`: add to a `Button` to play the profile's hover
-    (mouse pointer-enter or gamepad/keyboard `ISelectHandler`) and confirm
-    (`onClick`) sounds.
+  - `UIButtonSound`: add to a `Button` to play the profile's selection
+    sound (when the button becomes selected - gamepad/keyboard navigation or
+    a click, not mouse hover) and confirm (`onClick`) sound.
   - `MainMenuUIController` plays the profile's main menu music from
     `Start()`.
   - Two `AudioSource`s (UI one-shots, looping music) are created at

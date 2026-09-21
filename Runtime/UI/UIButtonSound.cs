@@ -5,14 +5,14 @@ using UnityEngine.UI;
 namespace FilloPrinci.RetroFpa
 {
     /// <summary>
-    /// Plays the global UI hover/confirm sounds (<see cref="AudioProfile"/>,
+    /// Plays the global UI selection/confirm sounds (<see cref="AudioProfile"/>,
     /// via <see cref="AudioManager"/>) for the <see cref="Button"/> on this
-    /// GameObject. Add it to any button that should make sound - hover
-    /// fires for both mouse pointer-enter and gamepad/keyboard navigation
-    /// (<see cref="ISelectHandler"/>), so it works with either input method.
+    /// GameObject. Add it to any button that should make sound. The
+    /// selection sound fires when the button becomes the selected one
+    /// (gamepad/keyboard navigation, or a click) - NOT on mouse hover.
     /// </summary>
     [RequireComponent(typeof(Button))]
-    public class UIButtonSound : MonoBehaviour, IPointerEnterHandler, ISelectHandler
+    public class UIButtonSound : MonoBehaviour, ISelectHandler
     {
         private Button button;
 
@@ -30,8 +30,6 @@ namespace FilloPrinci.RetroFpa
         {
             button.onClick.RemoveListener(HandleClick);
         }
-
-        public void OnPointerEnter(PointerEventData eventData) => AudioManager.Instance?.PlayUIHover();
 
         public void OnSelect(BaseEventData eventData) => AudioManager.Instance?.PlayUIHover();
 
