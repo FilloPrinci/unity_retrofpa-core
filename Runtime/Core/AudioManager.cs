@@ -31,6 +31,7 @@ namespace FilloPrinci.RetroFpa
         private float maxSfxVolume = 0.5f;
 
         private AudioSource uiSource;
+        private AudioSource hoverSource;
         private AudioSource musicSource;
         private float sfxVolume = 1f;
 
@@ -47,6 +48,11 @@ namespace FilloPrinci.RetroFpa
 
             uiSource = gameObject.AddComponent<AudioSource>();
             uiSource.playOnAwake = false;
+
+            // Separate from uiSource so a new hover can cut the previous hover
+            // off (one at a time) without also cutting off a confirm sound.
+            hoverSource = gameObject.AddComponent<AudioSource>();
+            hoverSource.playOnAwake = false;
 
             musicSource = gameObject.AddComponent<AudioSource>();
             musicSource.playOnAwake = false;
@@ -96,6 +102,11 @@ namespace FilloPrinci.RetroFpa
             {
                 uiSource.volume = sfxVolume;
             }
+
+            if (hoverSource != null)
+            {
+                hoverSource.volume = sfxVolume;
+            }
         }
 
         /// <summary>Applies <paramref name="profile"/> as the current global audio.</summary>
@@ -110,7 +121,19 @@ namespace FilloPrinci.RetroFpa
             Profile = profile;
         }
 
-        public void PlayUIHover() => PlayOneShotUI(Profile != null ? Profile.UIHoverSound : null);
+        /// <summary>Plays the UI hover sound; if a hover sound is still playing, it is cut off (only one at a time).</summary>
+        public void PlayUIHover()
+        {
+            AudioClip clip = Profile != null ? Profile.UIHoverSound : null;
+            if (clip == null)
+            {
+                return;
+            }
+
+            hoverSource.Stop();
+            hoverSource.clip = clip;
+            hoverSource.Play();
+        }
 
         public void PlayUIConfirm() => PlayOneShotUI(Profile != null ? Profile.UIConfirmSound : null);
 

@@ -62,6 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `SceneAmbientAudio`: one level's looping ambient track/music, the audio
     equivalent of `SceneAtmosphere` (same `LevelSceneManager.LevelLoaded`
     timing, same reasoning).
+  - UI hover sounds play one at a time: a new hover cuts off the one still
+    playing (own `AudioSource`, so a confirm sound is never cut off by it).
   - `UIButtonSound`: add to a `Button` to play the profile's hover
     (mouse pointer-enter or gamepad/keyboard `ISelectHandler`) and confirm
     (`onClick`) sounds.
