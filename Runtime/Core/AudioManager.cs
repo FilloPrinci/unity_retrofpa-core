@@ -22,6 +22,14 @@ namespace FilloPrinci.RetroFpa
         [SerializeField, Range(0f, 1f)]
         private float worldSoundVolume = 1f;
 
+        [Tooltip("Actual volume at the Music slider's maximum. The Settings slider still runs 0..1 - this scales it, so the loudest music setting isn't the clip's full volume.")]
+        [SerializeField, Range(0f, 1f)]
+        private float maxMusicVolume = 0.5f;
+
+        [Tooltip("Actual volume at the SFX slider's maximum (UI sounds and world one-shots). Same idea as Max Music Volume.")]
+        [SerializeField, Range(0f, 1f)]
+        private float maxSfxVolume = 0.25f;
+
         private AudioSource uiSource;
         private AudioSource musicSource;
         private float sfxVolume = 1f;
@@ -77,16 +85,16 @@ namespace FilloPrinci.RetroFpa
         {
             if (musicSource != null)
             {
-                musicSource.volume = value;
+                musicSource.volume = value * maxMusicVolume;
             }
         }
 
         private void HandleSfxVolumeChanged(float value)
         {
-            sfxVolume = value;
+            sfxVolume = value * maxSfxVolume;
             if (uiSource != null)
             {
-                uiSource.volume = value;
+                uiSource.volume = sfxVolume;
             }
         }
 
