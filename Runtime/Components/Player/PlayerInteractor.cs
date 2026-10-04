@@ -76,7 +76,7 @@ namespace FilloPrinci.RetroFpa
 
         private void Update()
         {
-            if (!FirstPersonController.IsCursorLocked)
+            if (!FirstPersonController.IsGameplayInputEnabled)
             {
                 ClearCurrentTarget();
                 return;
@@ -109,7 +109,7 @@ namespace FilloPrinci.RetroFpa
 
         private void HandleInteractPerformed(InputAction.CallbackContext context)
         {
-            if (!FirstPersonController.IsCursorLocked || currentTarget == null)
+            if (!FirstPersonController.IsGameplayInputEnabled || currentTarget == null)
             {
                 return;
             }

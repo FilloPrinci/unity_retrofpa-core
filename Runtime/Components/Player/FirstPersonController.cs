@@ -34,6 +34,25 @@ namespace FilloPrinci.RetroFpa
         /// <summary>True while the cursor is locked — i.e. while no UI screen is capturing input.</summary>
         public static bool IsCursorLocked { get; private set; }
 
+        private static int gameplayInputBlockCount;
+
+        /// <summary>
+        /// True while gameplay input (look/move/interact/attack) should run:
+        /// the cursor is locked and nothing has blocked gameplay input via
+        /// <see cref="BlockGameplayInput"/> (e.g. a modal description box,
+        /// which halts the player without freeing the cursor).
+        /// </summary>
+        public static bool IsGameplayInputEnabled => IsCursorLocked && gameplayInputBlockCount == 0;
+
+        /// <summary>Halts gameplay input, keeping the cursor locked. Counted: each call needs a matching <see cref="UnblockGameplayInput"/>.</summary>
+        public static void BlockGameplayInput() => gameplayInputBlockCount++;
+
+        public static void UnblockGameplayInput() => gameplayInputBlockCount = Mathf.Max(0, gameplayInputBlockCount - 1);
+
+        // Statics survive entering Play mode when domain reload is disabled.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => gameplayInputBlockCount = 0;
+
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
@@ -59,7 +78,7 @@ namespace FilloPrinci.RetroFpa
 
         /// <summary>
         /// Locks/hides (or frees/shows) the cursor, and gates gameplay input
-        /// (look/move/interact/attack) on it via <see cref="IsCursorLocked"/>.
+        /// (look/move/interact/attack) on it via <see cref="IsGameplayInputEnabled"/>.
         /// Exposed so a UI screen (pause menu, inventory, ...) can release
         /// the cursor — and gameplay input with it — while open, without
         /// this controller needing to know about that UI.
@@ -82,7 +101,7 @@ namespace FilloPrinci.RetroFpa
 
         private void Update()
         {
-            if (!IsCursorLocked)
+            if (!IsGameplayInputEnabled)
             {
                 return;
             }

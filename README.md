@@ -39,7 +39,8 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
 - **World components** (`Runtime/Components/`) — `Interactable` (generic
   "this can be interacted with" building block, optional interact sound),
   `Collectible`/`CollectibleItem` (pickup → `InventoryManager`, optional
-  pickup sound), `DialogueTrigger` (interact → starts a `DialogueData`),
+  pickup sound), `Checkable` (interact → shows its localized description
+  in a modal box, the object stays), `DialogueTrigger` (interact → starts a `DialogueData`),
   `SceneChangeTrigger` (walk into a volume → load a level),
   `InteractableSceneChangeTrigger` (interact with an object → load a level —
   a door/ladder/exit, as opposed to a volume), `SceneAtmosphere` (gives one
@@ -60,7 +61,10 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   — disabled with no save file, Settings, Quit), `PauseMenuUIController`
   (Resume, Save, Settings, Quit), `SettingsUIController` (audio volumes,
   look sensitivity, locale, VSync, fullscreen, resolution),
-  `InteractionPromptUI`, `UIButtonSound` (add to any `Button` for the global
+  `DescriptionUIController` (the modal box for `Checkable`: halts the
+  player without freeing the cursor, closed by pressing Interact again),
+  `InteractionPromptUI` (with an optional hold-progress ring for
+  hold-to-interact objects), `UIButtonSound` (add to any `Button` for the global
   hover/confirm sounds).
 - **Data** (`Runtime/Data/`) — `ItemData` (icon, world prefab, equipped-model
   prefab, optional `EquippableBehavior`), `EquippableBehavior` +

@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `Checkable`: an examinable object. Interacting shows its localized
+  description in a modal box (`DescriptionUIController`, a `UIScreen`):
+  the player is halted while it's open, the cursor stays hidden, and
+  pressing Interact again closes it. The object stays and can be checked
+  again. Halting without freeing the cursor uses the new
+  `FirstPersonController.BlockGameplayInput`/`UnblockGameplayInput`;
+  gameplay input (move/look/interact/attack) is now gated on
+  `IsGameplayInputEnabled` (cursor locked and nothing blocking) instead of
+  `IsCursorLocked` alone.
+
 - Hold-to-interact: `Interactable` has an optional *Require Hold* (with
   *Hold Duration*, default 1 s). By default an interaction triggers on a
   plain press; with *Require Hold* `PlayerInteractor` only triggers once

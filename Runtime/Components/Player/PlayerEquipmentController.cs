@@ -32,7 +32,7 @@ namespace FilloPrinci.RetroFpa
 
         private void HandleAttackPerformed(InputAction.CallbackContext context)
         {
-            if (!FirstPersonController.IsCursorLocked)
+            if (!FirstPersonController.IsGameplayInputEnabled)
             {
                 return;
             }
