@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `RetroTwoLayer`: semi-transparent areas of the two layers rendered black.
+  The graph had no Alpha output and was opaque-only, so a layer's alpha was
+  ignored (only Alpha Over used it, as a lerp factor). The layers are now
+  composited by their alpha (where only one is opaque it shows as-is, where
+  both are the Blend Mode applies, where neither is the result is
+  transparent) and the result drives a new Alpha output. *Allow Material
+  Override* is on: materials stay Opaque by default, and can switch to
+  Transparent or Alpha Clipping individually.
+
 - `AudioManager`: the Music and SFX volume sliders in Settings had no effect
   (only Master worked, via `AudioListener.volume`). `AudioManager` now applies
   `SettingsManager`'s music volume to its music source and SFX volume to UI
