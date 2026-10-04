@@ -22,10 +22,24 @@ namespace FilloPrinci.RetroFpa
         [SerializeField]
         private AudioClip interactSound;
 
+        [Tooltip("If set, the interact button must be held for Hold Duration seconds to trigger, instead of just pressed.")]
+        [SerializeField]
+        private bool requireHold;
+
+        [Tooltip("Seconds the interact button must be held, when Require Hold is set.")]
+        [Min(0f)]
+        [SerializeField]
+        private float holdDuration = 1f;
+
         [SerializeField]
         private UnityEvent<GameObject> onInteract;
 
         public LocalizedString PromptText => promptText;
+
+        /// <summary>Whether the interact button must be held (for <see cref="HoldDuration"/>) rather than just pressed.</summary>
+        public bool RequiresHold => requireHold;
+
+        public float HoldDuration => holdDuration;
 
         /// <summary>Raised whenever <see cref="Interact"/> is called, passing the interactor.</summary>
         public event Action<GameObject> Interacted;

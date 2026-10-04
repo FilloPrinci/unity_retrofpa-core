@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Hold-to-interact: `Interactable` has an optional *Require Hold* (with
+  *Hold Duration*, default 1 s). By default an interaction triggers on a
+  plain press; with *Require Hold* `PlayerInteractor` only triggers once
+  the button has been held that long on the same target (looking away or
+  releasing cancels), raising the new `HoldProgressChanged` (0..1)
+  meanwhile. `InteractionPromptUI` gains optional `keyText` (the key label
+  on its own, e.g. on a key icon), `holdIndicator` (shown only for
+  hold targets) and `holdFill` (a Filled `Image` following the progress).
+  **Projects must remove any Hold interaction from their Interact input
+  action**, or plain presses will need holding again.
+
 - `Retro FPA/Validate/Levels` (also a "Validate Levels" button in the
   Dashboard): scans the scenes in Build Settings. The persistent scene must
   have `GameBootstrapper` and `GameManager` (plus warnings for the other

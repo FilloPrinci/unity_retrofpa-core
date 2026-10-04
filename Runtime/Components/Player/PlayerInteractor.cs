@@ -10,7 +10,11 @@ namespace FilloPrinci.RetroFpa
     /// the player is looking at, raising <see cref="LookTargetChanged"/> when
     /// it changes (for a UI prompt to react to). Calls
     /// <see cref="Interactable.Interact"/> on the current target when the
-    /// interact input is performed.
+    /// interact input is pressed or, for a target that
+    /// <see cref="Interactable.RequiresHold"/>, once it has been held for the
+    /// target's <see cref="Interactable.HoldDuration"/> (raising
+    /// <see cref="HoldProgressChanged"/> meanwhile). The interact action
+    /// itself must be a plain press - no Hold interaction on it.
     /// </summary>
     public class PlayerInteractor : MonoBehaviour
     {
@@ -22,7 +26,12 @@ namespace FilloPrinci.RetroFpa
         /// <summary>Raised whenever the currently looked-at Interactable changes (null when looking at nothing interactable).</summary>
         public static event Action<Interactable> LookTargetChanged;
 
+        /// <summary>Raised every frame while a hold is in progress, with its 0..1 progress, and with 0 when it ends (completed or cancelled).</summary>
+        public static event Action<float> HoldProgressChanged;
+
         private Interactable currentTarget;
+        private Interactable holdTarget;
+        private float holdElapsed;
 
         private void OnEnable()
         {
@@ -56,6 +65,8 @@ namespace FilloPrinci.RetroFpa
 
         private void ClearCurrentTarget()
         {
+            CancelHold();
+
             if (currentTarget != null)
             {
                 currentTarget = null;
@@ -72,6 +83,7 @@ namespace FilloPrinci.RetroFpa
             }
 
             UpdateLookTarget();
+            UpdateHold();
         }
 
         private void UpdateLookTarget()
@@ -89,18 +101,67 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
+            // Looking away cancels a hold in progress.
+            CancelHold();
             currentTarget = target;
             LookTargetChanged?.Invoke(currentTarget);
         }
 
         private void HandleInteractPerformed(InputAction.CallbackContext context)
         {
-            if (!FirstPersonController.IsCursorLocked)
+            if (!FirstPersonController.IsCursorLocked || currentTarget == null)
             {
                 return;
             }
 
-            currentTarget?.Interact(gameObject);
+            if (currentTarget.RequiresHold)
+            {
+                // Only a fresh press starts a hold, so keeping the button
+                // down after one completes doesn't retrigger it.
+                holdTarget = currentTarget;
+                holdElapsed = 0f;
+                HoldProgressChanged?.Invoke(0f);
+                return;
+            }
+
+            currentTarget.Interact(gameObject);
+        }
+
+        private void UpdateHold()
+        {
+            if (ReferenceEquals(holdTarget, null))
+            {
+                return;
+            }
+
+            if (holdTarget == null || !interactAction.action.IsPressed())
+            {
+                CancelHold();
+                return;
+            }
+
+            holdElapsed += Time.deltaTime;
+            float duration = holdTarget.HoldDuration;
+            float progress = duration > 0f ? Mathf.Clamp01(holdElapsed / duration) : 1f;
+            HoldProgressChanged?.Invoke(progress);
+
+            if (progress >= 1f)
+            {
+                Interactable target = holdTarget;
+                CancelHold();
+                target.Interact(gameObject);
+            }
+        }
+
+        private void CancelHold()
+        {
+            // ReferenceEquals: a hold target destroyed mid-hold must still
+            // be cleared (and its progress reset), see UpdateLookTarget.
+            if (!ReferenceEquals(holdTarget, null))
+            {
+                holdTarget = null;
+                HoldProgressChanged?.Invoke(0f);
+            }
         }
 
         private Interactable Raycast()
