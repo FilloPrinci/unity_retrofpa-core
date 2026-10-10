@@ -16,6 +16,10 @@ namespace FilloPrinci.RetroFpa
     {
         [SerializeField] private AudioClip ambientTrack;
 
+        [Tooltip("Volume of this level's ambient track, relative to the Music setting.")]
+        [SerializeField, Range(0.1f, 1f)]
+        private float volume = 1f;
+
         private void OnEnable()
         {
             LevelSceneManager.LevelLoaded += HandleLevelLoaded;
@@ -39,7 +43,7 @@ namespace FilloPrinci.RetroFpa
                 return;
             }
 
-            AudioManager.Instance.PlaySceneAmbient(ambientTrack);
+            AudioManager.Instance.PlaySceneAmbient(ambientTrack, volume);
         }
     }
 }

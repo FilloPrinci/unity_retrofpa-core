@@ -34,6 +34,8 @@ namespace FilloPrinci.RetroFpa
         private AudioSource hoverSource;
         private AudioSource musicSource;
         private float sfxVolume = 1f;
+        private float musicVolume = 1f;
+        private float musicTrackVolume = 1f;
 
         public AudioProfile Profile { get; private set; }
 
@@ -89,9 +91,16 @@ namespace FilloPrinci.RetroFpa
 
         private void HandleMusicVolumeChanged(float value)
         {
+            musicVolume = value * maxMusicVolume;
+            ApplyMusicVolume();
+        }
+
+        // The Music setting scaled by the current track's own volume.
+        private void ApplyMusicVolume()
+        {
             if (musicSource != null)
             {
-                musicSource.volume = value * maxMusicVolume;
+                musicSource.volume = musicVolume * musicTrackVolume;
             }
         }
 
@@ -140,8 +149,8 @@ namespace FilloPrinci.RetroFpa
         /// <summary>Plays the main menu music, replacing whatever was already playing.</summary>
         public void PlayMainMenuMusic() => PlayMusic(Profile != null ? Profile.MainMenuMusic : null);
 
-        /// <summary>Plays one level's ambient track (see <see cref="SceneAmbientAudio"/>), replacing whatever was already playing.</summary>
-        public void PlaySceneAmbient(AudioClip clip) => PlayMusic(clip);
+        /// <summary>Plays one level's ambient track (see <see cref="SceneAmbientAudio"/>), replacing whatever was already playing. <paramref name="volume"/> (0..1) scales the Music setting for this track only.</summary>
+        public void PlaySceneAmbient(AudioClip clip, float volume = 1f) => PlayMusic(clip, volume);
 
         /// <summary>Plays a footstep at <paramref name="position"/> - <paramref name="overrideClip"/> if given (e.g. from a <see cref="SurfaceAudio"/>), else the profile's default.</summary>
         public void PlayFootstep(AudioClip overrideClip, Vector3 position) =>
@@ -171,8 +180,11 @@ namespace FilloPrinci.RetroFpa
             }
         }
 
-        private void PlayMusic(AudioClip clip)
+        private void PlayMusic(AudioClip clip, float trackVolume = 1f)
         {
+            musicTrackVolume = Mathf.Clamp01(trackVolume);
+            ApplyMusicVolume();
+
             if (musicSource.clip == clip && musicSource.isPlaying)
             {
                 return;

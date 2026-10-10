@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `SceneAmbientAudio`: a *Volume* slider (0.1..1) for that level's ambient
+  track, relative to the Music setting. `AudioManager.PlaySceneAmbient`
+  takes the volume as an optional second argument; the main menu music
+  plays at 1.
+
 - `ChildGroundAnchor`: drops each direct child straight down (world -Y)
   onto the first collider below it, ignoring triggers and the children's
   own colliders - e.g. to rest trees or rocks on uneven ground. Ground
