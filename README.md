@@ -178,7 +178,7 @@ For normal use, reference a release tag by git URL (this is what
 ```json
 {
   "dependencies": {
-    "com.filloprinci.retrofpa": "https://github.com/FilloPrinci/unity_retrofpa-core.git#v0.1.0"
+    "com.filloprinci.retrofpa": "https://github.com/FilloPrinci/unity_retrofpa-core.git#v0.2.0"
   }
 }
 ```
