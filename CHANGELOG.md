@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `ChildGroundAnchor`: drops each direct child straight down (world -Y)
+  onto the first collider below it, ignoring triggers and the children's
+  own colliders - e.g. to rest trees or rocks on uneven ground. Ground
+  layer mask, max distance, optional start height and vertical offset.
+  Applied from the Inspector button (with Undo, saved with the scene), or
+  at runtime with *Anchor On Start*.
+
+- `ChildTransformRandomizer`: gives each direct child a random rotation
+  (min/max per axis) and uniform scale (min/max), e.g. to vary copies of
+  the same tree or rock prefab. Seeded, so the same seed reproduces the
+  same result. Applied from the Inspector buttons (with Undo, saved with
+  the scene, so it works with static/lightmapped children), or at runtime
+  with *Randomize On Awake*.
+
 - `Checkable`: an examinable object. Interacting shows its localized
   description in a modal box (`DescriptionUIController`, a `UIScreen`):
   the player is halted while it's open, the cursor stays hidden, and

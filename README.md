@@ -49,7 +49,10 @@ consumed by one or more Unity projects, such as `retrofpa-project-template`.
   per-surface footstep sound), `SaveableId` (a stable per-instance id) +
   `SaveableCollectible` (bridges `Collectible` → `SaveManager`, so a pickup
   stays gone across saves/revisits), `SpawnPoint`, `NpcBase` (Animator +
-  `AnimatorOverrideController` slot), `Rotator`, `FresnelPulse`.
+  `AnimatorOverrideController` slot), `Rotator`, `FresnelPulse`,
+  `ChildTransformRandomizer` (random rotation/scale for an object's
+  children, applied from the Inspector or on Awake), `ChildGroundAnchor`
+  (drops an object's children onto the collider below them).
 - **UI shell** (`Runtime/UI/`) — `UIScreen`, the `CanvasGroup`-based base
   class every screen below builds on (show/hide without disabling the
   GameObject, shared cursor-lock/unlock counting across however many screens
