@@ -1267,7 +1267,7 @@
     "m_FunctionName": "RetroTwoLayerComposite",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "// Composites Layer2 over Layer1 with the selected Blend Mode, weighted by\n// each layer's alpha: where only one layer is opaque it shows as-is, where\n// both are it shows the blend, where neither is the result is transparent.\nfloat a1 = saturate(Layer1.a);\nfloat a2 = saturate(Layer2.a);\nAlpha = a1 + a2 - a1 * a2;\nfloat3 premultiplied = Layer1.rgb * a1 * (1.0 - a2)\n    + Layer2.rgb * a2 * (1.0 - a1)\n    + Blended.rgb * a1 * a2;\nColor = premultiplied / max(Alpha, 0.0001);"
+    "m_FunctionBody": "float a1 = saturate(Layer1.a);\nfloat a2 = saturate(Layer2.a);\n#if defined(_BLEND_MODE_MULTIPLY)\n// Multiply: color and alpha are both the product of the two layers', so\n// either layer can cut the other out.\nAlpha = a1 * a2;\nColor = Blended.rgb;\n#else\n// Other modes: Layer2 composited over Layer1, weighted by each layer's\n// alpha. Where only one layer is opaque it shows as-is, where both are it\n// shows the blend, where neither is the result is transparent.\nAlpha = a1 + a2 - a1 * a2;\nfloat3 premultiplied = Layer1.rgb * a1 * (1.0 - a2)\n    + Layer2.rgb * a2 * (1.0 - a1)\n    + Blended.rgb * a1 * a2;\nColor = premultiplied / max(Alpha, 0.0001);\n#endif"
 }
 
 {
@@ -8067,4 +8067,3 @@
     "isMainColor": false,
     "m_ColorMode": 1
 }
-

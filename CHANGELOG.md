@@ -54,6 +54,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   target scene/spawn point doesn't exist. Scenes with a `SpawnPoint` that are
   missing from Build Settings are flagged too.
 
+### Changed
+
+- `RetroTwoLayer`: with Blend Mode *Multiply* the alpha is now multiplied
+  too (`a1 * a2`, color `c1 * c2`), so either layer can cut the other out -
+  it used to be composited like the other modes (`a1 + a2 - a1 * a2`). A
+  single-layer material (Layer 2 left white) now simply takes Layer 1's
+  alpha.
+
 ### Fixed
 
 - `RetroTwoLayer`: semi-transparent areas of the two layers rendered black.
