@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Documentation: a User Guide (`Documentation~/user-guide.md`) for working
+  from the Editor, a Developer Guide (`Documentation~/developer-guide.md`)
+  for changing the package, and a `CLAUDE.md` brief for AI coding agents.
+
 ## [0.2.0] - 2026-10-10
 
 ### Added

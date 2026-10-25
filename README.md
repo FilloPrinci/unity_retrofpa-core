@@ -18,6 +18,16 @@ repository for the full design rationale.
 This package contains **no game-specific content** — it is meant to be
 consumed by one or more Unity projects, such as `retrofpa-project-template`.
 
+## Documentation
+
+- **[User Guide](Documentation~/user-guide.md)**: using the package from the
+  Unity Editor (project setup, building levels, interactables, items,
+  dialogue, style, audio, saves, validators, troubleshooting).
+- **[Developer Guide](Documentation~/developer-guide.md)**: changing the
+  package (architecture, event catalogue, ordering rules, conventions,
+  recipes, compatibility, releasing). [`CLAUDE.md`](CLAUDE.md) is a short
+  brief for AI coding agents that points to it.
+
 ## What's here
 
 - **Core managers** (`Runtime/Core/`) — `GameManager` (game state),
